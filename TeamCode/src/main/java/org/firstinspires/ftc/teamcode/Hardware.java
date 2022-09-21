@@ -650,23 +650,23 @@ public class Hardware extends LinearOpMode
      * @param joystickY y value of the joystick this is used for forward/backwards movement
      * @param rotation x value of right joystick, used for turning
      */
-    public void driveOmniDir(double joystickX, double joystickY, double rotation)
-     {
-         /**                   | Forward and|
-          *                    | Backwards  | Strafing | Turning |  */
-
-         motorFrontRight.setPower(-joystickY - joystickX - rotation);
-         motorBackRight.setPower(-joystickY + joystickX - rotation);
-         motorFrontLeft.setPower(-joystickY + joystickX + rotation);
-         motorBackLeft.setPower(-joystickY - joystickX + rotation);
-
-         /*else
-         {
-             motorFrontRight.setPower((-joystickY - joystickX - rotation) / slowFactor);
-             motorBackRight.setPower((-joystickY + joystickX - rotation) / slowFactor);
-             motorFrontLeft.setPower((-joystickY + joystickX + rotation) / slowFactor);
-             motorBackLeft.setPower((-joystickY - joystickX + rotation) / slowFactor);
-         }*/
+    public void driveOmniDir(double joystickX, double joystickY, double rotation, boolean slow, double slowFactor)
+    {
+        /**                   | Forward and|
+         *                    | Backwards  | Strafing | Turning |  */
+        if(!slow){
+            motorFrontRight.setPower(-joystickY - joystickX - rotation);
+            motorBackRight.setPower(-joystickY + joystickX - rotation);
+            motorFrontLeft.setPower(-joystickY + joystickX + rotation);
+            motorBackLeft.setPower(-joystickY - joystickX + rotation);
+        }
+        else
+        {
+            motorFrontRight.setPower((-joystickY - joystickX - rotation) / slowFactor);
+            motorBackRight.setPower((-joystickY + joystickX - rotation) / slowFactor);
+            motorFrontLeft.setPower((-joystickY + joystickX + rotation) / slowFactor);
+            motorBackLeft.setPower((-joystickY - joystickX + rotation) / slowFactor);
+        }
 
 
          /**motorFrontRight.setPower(--1 - joystickX - rotation);

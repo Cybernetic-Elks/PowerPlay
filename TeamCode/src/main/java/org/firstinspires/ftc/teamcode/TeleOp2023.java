@@ -28,7 +28,7 @@ public class TeleOp2023 extends LinearOpMode
         }
         telemetry.addData("Main Initialization ", "complete");
         telemetry.update();
-
+        boolean slow = false;
         waitForStart();
         while (opModeIsActive()) {
             telemetry.addData("motorFrontLeft: ", h.motorFrontLeft.getDirection());
@@ -40,9 +40,9 @@ public class TeleOp2023 extends LinearOpMode
             h.motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
             h.motorFrontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
             h.motorBackLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-
+            slow = gamepad1.a;
             /**Start drive system**/
-            h.driveOmniDir(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+            h.driveOmniDir(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, slow, 2);
         }
     }
 }

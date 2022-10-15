@@ -468,18 +468,13 @@ public class Hardware extends LinearOpMode
      */
     public void strafe(boolean left, int distanceInches,double power)
     {
-        int distanceEncodeVal;
 
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        distanceEncodeVal = (int) Math.round((distanceInches*(COUNTS_PER_INCH)));
-        driveTime = (distanceInches/10)*1000;
-
-
-
+        int distanceEncodeVal = (int) Math.round((distanceInches*(COUNTS_PER_INCH)));
 
 
         if(left)
@@ -517,15 +512,16 @@ public class Hardware extends LinearOpMode
         if(left)
         {
 
-            while (motorFrontRight.getCurrentPosition() < -distanceEncodeVal + 20 && !isStopRequested()/* && end > System.currentTimeMillis()*/)
+            while (motorFrontRight.getCurrentPosition() > distanceEncodeVal - 20 && !isStopRequested()/* && end > System.currentTimeMillis()*/)
             {
 
             }
+
         }
         else
         {
 
-            while (motorFrontRight.getCurrentPosition() > distanceEncodeVal - 20 && !isStopRequested()/* && end > System.currentTimeMillis()*/)
+            while (motorFrontRight.getCurrentPosition() < -distanceEncodeVal + 20 && !isStopRequested()/* && end > System.currentTimeMillis()*/)
             {
 
             }
@@ -606,15 +602,19 @@ public class Hardware extends LinearOpMode
         if(left)
         {
 
-            while (motorFrontRight.getCurrentPosition() < -distanceEncodeVal + 20 && !isStopRequested())
+            while (motorFrontRight.getCurrentPosition() > distanceEncodeVal - 20 && !isStopRequested()/* && end > System.currentTimeMillis()*/)
             {
-
+            telemetry.addData("FRMotor Pos", motorFrontRight.getCurrentPosition());
+            telemetry.addData("DistanceEncodeVal", distanceEncodeVal);
+            telemetry.addData("FRMotor Target Pos", motorFrontRight.getTargetPosition());
+            telemetry.update();
             }
+
         }
         else
         {
 
-            while (motorFrontRight.getCurrentPosition() > distanceEncodeVal - 20 && !isStopRequested())
+            while (motorFrontRight.getCurrentPosition() < -distanceEncodeVal + 20 && !isStopRequested()/* && end > System.currentTimeMillis()*/)
             {
 
             }

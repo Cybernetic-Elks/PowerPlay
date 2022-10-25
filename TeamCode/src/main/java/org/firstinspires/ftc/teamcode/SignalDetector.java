@@ -27,9 +27,9 @@ public class SignalDetector extends OpenCvPipeline {
     private Side side;
 
     static final Rect ROI = new Rect(
-            new Point(230, 20),
-            new Point(80, 220));
-    static double PERCENT_COLOR_THRESHOLD = 0.4;
+            new Point(180, 70),
+            new Point(140, 140));
+    static double PERCENT_COLOR_THRESHOLD = 0.28;
 
     public SignalDetector(Telemetry t) { telemetry = t; }
 
@@ -65,8 +65,8 @@ public class SignalDetector extends OpenCvPipeline {
 
         purple.release();
 
-        telemetry.addData("Right raw value", (int) Core.sumElems(purple).val[0]);
-        telemetry.addData("Right percentage", Math.round(purpleValue * 100) + "%");
+        telemetry.addData("purple raw value", (int) Core.sumElems(purple).val[0]);
+        telemetry.addData("purple percentage", Math.round(purpleValue * 100) + "%");
         boolean sidePurple = purpleValue > PERCENT_COLOR_THRESHOLD;
 
         if (sidePurple) {

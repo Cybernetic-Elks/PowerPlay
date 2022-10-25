@@ -96,10 +96,10 @@ public class Hardware extends LinearOpMode
      * The variables and Equation used to turn the current wheels' encoders into inches
      */
     final double     COUNTS_PER_MOTOR_REV    = 384.5 ;    // eg: Gobuilda 13.7:1 Ratio, 435 RPM
-    final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP (2 rotations at input = 1 at output)
+    final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP (2 rotations at input = 1 at output)
     final double     WHEEL_DIAMETER_INCHES   = 96 / 25.4;     // For figuring circumference (96mm / 25.4 = ~3.78)
     final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);
-    //                                                             764                       /     11.8378
+    //                                                             384.5                       /     11.8378
 
     private Telemetry telemetry;
 
@@ -112,8 +112,6 @@ public class Hardware extends LinearOpMode
     public void init(HardwareMap aMap, Telemetry inputTelemetry)
     {
         telemetry = inputTelemetry;
-        //this.aMap = inputOpMode.hardwareMap;
-        //this.telemetry = inputOpMode.telemetry;
         
         motorFrontRight = aMap.dcMotor.get("motorFrontRight");
         motorBackRight = aMap.dcMotor.get("motorBackRight");
@@ -122,110 +120,38 @@ public class Hardware extends LinearOpMode
         motorArm = aMap.dcMotor.get("motorArm");
         motorWinch = aMap.dcMotor.get("motorWinch");
         motorCarousel = aMap.dcMotor.get("motorCarousel");
-        //motorSwivel =aMap.dcMotor.get("motorSwivel");
 
-        //motorLeftLaunch = aMap.dcMotor.get("motorLeftLaunch");
-       // motorLaunch = aMap.dcMotor.get("motorLaunch");
-            //motorIntake = aMap.dcMotor.get("motorIntake");
-        //motorWorm = aMap.dcMotor.get("motorWorm");
-        /*//motorLift = aMap.dcMotor.get("motorLift");
-        //motorSpinner = aMap.dcMotor.get("motorSpinner");
-
-        //markerDropServo = aMap.servo.get("markerDropServo");
-        //bucketFlapServo = aMap.servo.get("bucketFlapServo");
-        servoSwivel = aMap.servo.get("servoSwivel");
-        servoStopper = aMap.servo.get("servoStopper");
-        servoFoundation1 = aMap.servo.get("servoFoundation1");
-        servoFoundation2 = aMap.servo.get("servoFoundation2");
-        servoSuction = aMap.servo.get("servoSuction");
-        */
         servoIntake = aMap.servo.get("servoIntake");
         servoWrist = aMap.servo.get("servoWrist");
-        /*
-        servoSpin = aMap.crservo.get("servoSpin");
-        servoSpin2 = aMap.crservo.get("servoSpin2");
-*/
+
         MRgyro = aMap.get(ModernRoboticsI2cGyro.class, "MRgyro");
-        //MRRange = aMap.get(ModernRoboticsI2cRangeSensor.class, "MRRange");*/
 
-        //colorSensor = aMap.get(ColorSensor.class, "REVcolor");
-        //distanceSensor = aMap.get(DistanceSensor.class, "REVcolor");
-        //distanceSensor = hardwareMap.get(DistanceSensor.class, "Distance");
-
-
-        //motorLaunch.setDirection(DcMotorSimple.Direction.FORWARD);
-            //motorIntake.setDirection(DcMotorSimple.Direction.FORWARD);
-        //motorWorm.setDirection(DcMotorSimple.Direction.FORWARD);
-        //motorLeftLaunch.setDirection(DcMotorSimple.Direction.REVERSE);
-        //motorArm.setTargetPosition(0);
-        /*motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);*/
         motorArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //motorArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorArm.setDirection(DcMotorSimple.Direction.FORWARD);
         motorArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         motorWinch.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //motorWinch.setTargetPosition(0);
         motorWinch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorWinch.setDirection(DcMotorSimple.Direction.FORWARD);
         motorWinch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-
-        //motorSwivel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //motorSwivel.setDirection(DcMotorSimple.Direction.FORWARD);
-        /*motorSwivel.setTargetPosition(0);
-        motorSwivel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorSwivel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorSwivel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);*/
-
         motorCarousel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        //motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        //motorSpinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //motorWinch.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //motorArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        //motorSwivel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //motorWinch.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
 
 
         motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        /*motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);*/
 
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorFrontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorBackLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        /*
-        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorFrontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorBackLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        * */
-
-
+        motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         motorFrontRight.setPower(0);
         motorBackRight.setPower(0);
@@ -565,78 +491,39 @@ public class Hardware extends LinearOpMode
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-
+        //Directions on this might be wrong
         if(left)
-        {
-            motorFrontLeft.setTargetPosition(-distanceEncodeVal);
-            motorFrontRight.setTargetPosition(distanceEncodeVal);
-            motorBackLeft.setTargetPosition(distanceEncodeVal);
-            motorBackRight.setTargetPosition(-distanceEncodeVal);
-        }
-        else
         {
             motorFrontLeft.setTargetPosition(distanceEncodeVal);
             motorFrontRight.setTargetPosition(-distanceEncodeVal);
             motorBackLeft.setTargetPosition(-distanceEncodeVal);
             motorBackRight.setTargetPosition(distanceEncodeVal);
         }
-
-        motorFrontLeft.setPower(power);
-        motorFrontRight.setPower(power);
-        motorBackLeft.setPower(power);
-        motorBackRight.setPower(power);
+        else
+        {
+            motorFrontLeft.setTargetPosition(-distanceEncodeVal);
+            motorFrontRight.setTargetPosition(distanceEncodeVal);
+            motorBackLeft.setTargetPosition(distanceEncodeVal);
+            motorBackRight.setTargetPosition(-distanceEncodeVal);
+        }
 
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        /*
-        while((motorFrontLeft.getCurrentPosition() > distanceEncodeVal) && opModeIsActive())
-        {
-            telemetry.addData("Running", "...");
-            telemetry.update();
-        }
-        */
-        if(left)
-        {
-
-            while (motorFrontRight.getCurrentPosition() > distanceEncodeVal - 20 && !isStopRequested()/* && end > System.currentTimeMillis()*/)
-            {
-            telemetry.addData("FRMotor Pos", motorFrontRight.getCurrentPosition());
-            telemetry.addData("DistanceEncodeVal", distanceEncodeVal);
-            telemetry.addData("FRMotor Target Pos", motorFrontRight.getTargetPosition());
-            telemetry.update();
-            }
-
-        }
-        else
-        {
-
-            while (motorFrontRight.getCurrentPosition() < -distanceEncodeVal + 20 && !isStopRequested()/* && end > System.currentTimeMillis()*/)
-            {
-
-            }
-
-        }
+        setDrivePower((float) power);
 
 
+        telemetry.addData("FRMotor Pos", motorFrontRight.getCurrentPosition());
+        telemetry.addData("DistanceEncodeVal", distanceEncodeVal);
+        telemetry.addData("FRMotor Target Pos", motorFrontRight.getTargetPosition());
+        telemetry.update();
 
-        /*motorFrontLeft.setTargetPosition(0);
-        motorFrontRight.setTargetPosition(0);
-        motorBackLeft.setTargetPosition(0);
-        motorBackRight.setTargetPosition(0);*/
-
+        setDrivePower(0);
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        motorFrontLeft.setPower(0);
-        motorFrontRight.setPower(0);
-        motorBackLeft.setPower(0);
-        motorBackRight.setPower(0);
 
     }
 
@@ -655,10 +542,10 @@ public class Hardware extends LinearOpMode
         /**                   | Forward and|
          *                    | Backwards  | Strafing | Turning |  */
         if(!slow){
-            motorFrontRight.setPower(-joystickY - joystickX - rotation);
-            motorBackRight.setPower(-joystickY + joystickX - rotation);
-            motorFrontLeft.setPower(-joystickY + joystickX + rotation);
-            motorBackLeft.setPower(-joystickY - joystickX + rotation);
+            motorFrontRight.setPower((-joystickY - joystickX - rotation) / 2);
+            motorBackRight.setPower((-joystickY + joystickX - rotation) / 2);
+            motorFrontLeft.setPower((-joystickY + joystickX + rotation) / 2);
+            motorBackLeft.setPower((-joystickY - joystickX + rotation) / 2);
         }
         else
         {

@@ -36,13 +36,36 @@ public class TeleOp2023 extends LinearOpMode
             telemetry.addData("motorBackLeft: ", h.motorBackLeft.getDirection());
             telemetry.addData("motorBackRight: ", h.motorBackRight.getDirection());
             telemetry.update();
-            h.motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-            h.motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
-            h.motorFrontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-            h.motorBackLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+            h.motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+            h.motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
+            h.motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+            h.motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
             slow = gamepad1.a;
             /**Start drive system**/
-            h.driveOmniDir(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, slow, 2);
+            if (gamepad1.dpad_left || gamepad2.dpad_left) {
+                h.motorFrontLeft.setPower(-.3);
+                h.motorFrontRight.setPower(.3);
+                h.motorBackLeft.setPower(-.3);
+                h.motorBackRight.setPower(.3);
+            } else if (gamepad1.dpad_right || gamepad2.dpad_right) {
+                h.motorFrontLeft.setPower(.3);
+                h.motorFrontRight.setPower(-.3);
+                h.motorBackLeft.setPower(.3);
+                h.motorBackRight.setPower(-.3);
+            }
+            if (gamepad1.dpad_up || gamepad2.dpad_up) {
+                h.motorFrontLeft.setPower(.3);
+                h.motorFrontRight.setPower(.3);
+                h.motorBackLeft.setPower(.3);
+                h.motorBackRight.setPower(.3);
+            } else if (gamepad1.dpad_down || gamepad2.dpad_down) {
+                h.motorFrontLeft.setPower(-.3);
+                h.motorFrontRight.setPower(-.3);
+                h.motorBackLeft.setPower(-.3);
+                h.motorBackRight.setPower(-.3);
+            }
+
+            h.driveOmniDir(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, slow, 3);
 
         }
     }

@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp(name = "2023 TeleOp", group = "TeleOp")
+@TeleOp(name = "2023 TeleOp - CHOOSE THIS ONE", group = "TeleOp")
 /**
  * Programmer:
  * Date Created:  7/30/2022

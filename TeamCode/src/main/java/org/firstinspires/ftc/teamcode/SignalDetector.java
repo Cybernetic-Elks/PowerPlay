@@ -29,7 +29,7 @@ public class SignalDetector extends OpenCvPipeline {
     static final Rect ROI = new Rect(
             new Point(180, 70),
             new Point(140, 140));
-    static double PERCENT_COLOR_THRESHOLD = 0.28;
+    static double PERCENT_COLOR_THRESHOLD = 0.20;
 
     public SignalDetector(Telemetry t) { telemetry = t; }
 

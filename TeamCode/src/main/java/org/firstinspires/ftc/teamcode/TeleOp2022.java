@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp(name = "2022 TeleOp -CHOOSE THIS ONE-", group = "TeleOp")
+@TeleOp(name = "2022 TeleOp", group = "TeleOp")
 /**
  * Programmer:    Sean Pakros
  * Date Created:  9/25/21
@@ -55,11 +55,6 @@ public class TeleOp2022 extends LinearOpMode
             telemetry.addData("motorFrontRight: ", h.motorFrontRight.getDirection());
             telemetry.addData("motorBackLeft: ", h.motorBackLeft.getDirection());
             telemetry.addData("motorBackRight: ", h.motorBackRight.getDirection());
-            /*telemetry.addData("servoWrist: ", h.servoWrist.getPosition());
-            telemetry.addData("motorFrontLeft: ", h.motorFrontLeft.getCurrentPosition());
-            telemetry.addData("motorFrontRight: ", h.motorFrontRight.getCurrentPosition());
-            telemetry.addData("motorBackLeft: ", h.motorBackLeft.getCurrentPosition());
-            telemetry.addData("motorBackRight: ", h.motorBackRight.getCurrentPosition());*/
             telemetry.addData("wristPos: ", wristPos);
             telemetry.addData("servo toggle last iteration: ", pressedLastIterationIntake);
             telemetry.addData("servo toggle: ", pressedIntake);
@@ -101,28 +96,7 @@ public class TeleOp2022 extends LinearOpMode
             }
             /** END Fine Tuning Controls**/
 
-            /*if (gamepad1.dpad_down)
-                if (!dpadDownPressed)
-                {
-                    if (wristPos < .8)
-                    {
-                        wristPos += .1;
-                    }
-                    dpadDownPressed = true;
-                }
-                else
-                    dpadDownPressed = false;
-            if (gamepad1.dpad_up)
-                if (!dpadUpPressed)
-                {
-                    if (wristPos > .2) {
-                        wristPos -= .1;
-                    }
-                    dpadUpPressed = true;
-                }
-                else
-                    dpadUpPressed = false;
-                */
+
             if (gamepad1.b) {
                 h.servoWrist.setPosition(.5);
                 wristPos = .5;
@@ -136,17 +110,6 @@ public class TeleOp2022 extends LinearOpMode
             /** Toggle code for opening and closing the claw, if you press x it will alternate between being closed and opened enough for one block
              *  If you press y it will open fully we rarely open it fully as it adds risk that we may grab two blocks
              **/
-            //0 is opened-.57 is partial open, 1 is closed
-            /*if (gamepad1.x && !changed) {
-                if (h.servoIntake.getPosition() == 1) {
-                    h.servoIntake.setPosition(.57);
-                } else {
-                    h.servoIntake.setPosition(1);
-                }
-                changed = true;
-            } else if (!gamepad1.x){
-                changed = false;
-            }*/
             if(pressedIntake & !pressedLastIterationIntake)
             {
                 if(h.servoIntake.getPosition() > .8)
@@ -166,22 +129,7 @@ public class TeleOp2022 extends LinearOpMode
 
             /** END CLAW CONTROL**/
 
-            /*if(pressedSl & !pressedLastIterationCarousel)
-            {
-                if(h.motorCarousel.getPower() == 0 && gamepad2.b)
-                {
-                    h.motorCarousel.setPower(.3); //.3
-                }
-                else if(h.motorCarousel.getPower() == 0)
-                {
-                    h.motorCarousel.setPower(-.3); //-.3
-                }
-                else
-                {
-                    h.motorCarousel.setPower(0);
-                }
 
-            }*/
             /** Simple controls for the carousel spin one way when 'b' is pressed another way when 'x' is pressed **/
             if (gamepad2.b)
             {
@@ -196,16 +144,6 @@ public class TeleOp2022 extends LinearOpMode
                 h.motorCarousel.setPower(0);
             }
             /** END CAROUSEL CONTROL **/
-            /*if(pressedCarouselReverse & !pressedLastIterationCarouselReverse)
-            {
-                if(h.motorCarousel.getPower() == 0)
-                {
-                    h.motorCarousel.setPower(-.3);
-                }
-                else
-                {
-                    h.motorCarousel.setPower(0);
-                }*/
 
             /** Emergency switch to disable the limits on the arm in case we start the arm in the wrong position **/
             if(gamepad2.back)
@@ -215,19 +153,6 @@ public class TeleOp2022 extends LinearOpMode
 
             /** Our arm controls, this rotates the arm so we can reach the different levels. If 'a' on gamepad1 is held while moving the arm
              * it will move at half speed for more precision. This is helpful for precision placing such as the team shipping element**/
-            /*if(limitSwitch)
-            {
-                if(gamepad1.right_trigger > .01 && h.motorArm.getCurrentPosition() < 1470)
-                {
-                    h.motorArm.setPower(armSpeedDown);
-                }
-                if (gamepad1.right_bumper && h.motorArm.getCurrentPosition() > -200)
-                {
-                    h.motorArm.setPower(armSpeedUp);
-                }
-            }*/
-
-
             if(gamepad1.right_trigger > .01)
             {
                 h.motorArm.setPower(armSpeedDown);
@@ -254,19 +179,6 @@ public class TeleOp2022 extends LinearOpMode
                 armSpeedDown = .8;
                 armSpeedUp = -1;
             }
-            
-            /*if(gamepad1.b)
-            {
-                h.motorArm.setTargetPosition(500);
-                h.motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                h.motorArm.setPower(.3);
-            }
-            if(gamepad1.a)
-            {
-                h.motorArm.setTargetPosition(0);
-                h.motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                h.motorArm.setPower(.3);
-            }*/
 
 
             if(gamepad1.left_trigger > .01 && h.motorWinch.getCurrentPosition() < 450)
@@ -281,102 +193,7 @@ public class TeleOp2022 extends LinearOpMode
             {
                 h.motorWinch.setPower(0);
             }
-           /* if(gamepad1.y)
-            {
-                h.motorLaunch.setPower(gamepad1.left_trigger);
-            }
-            if(gamepad1.x)
-            {
-                h.motorLaunch.setPower(0);
-            }*/
-            /*if(gamepad1.left_trigger == 1 ) // Trigger Launcher Control
-            {
-                h.motorLaunch.setPower(1);
-                //++h.launchValue;
-            }
-            else if (gamepad1.left_trigger < .5)
-            {
-                h.motorLaunch.setPower(0);
-            }*/
-            /*if (gamepad1.y)
-            {
-                h.motorLaunch.setPower(1);
-            }
-            else
-            {
-                h.motorLaunch.setPower(0);
-            }
-            if(pressed & !pressedLastIteration)
-            {
-                if(h.motorLaunch.getPower() == 0)
-                {
-                    h.motorLaunch.setPower(1);
-                }
-                else
-                {
-                    h.motorLaunch.setPower(0);
-                }
 
-            }
-            pressedLastIteration = pressed;*/
-
-
-            /*if (gamepad1.y) //y button toggle Launcher Control
-            {
-                ++launchValue;
-            }
-            switch (launchValue)
-            {
-                case 1:
-                    h.motorLaunch.setPower(1);
-                    break;
-                case 2:
-                    h.motorLaunch.setPower(0);
-                    launchValue = 0;
-                    break;
-            }*/
-            /*if(gamepad1.a)
-            {
-                h.servoIntake.setPosition(.7);
-            }
-            if(gamepad1.b)
-            {
-                h.servoIntake.setPosition(1);
-            }*/
-            /*if (gamepad1.a) //Intake Control
-            {
-                ++intakeValue;
-            }
-            switch (intakeValue)
-            {
-                case 1:
-                    h.motorIntake.setPower(1);
-                    h.motorLaunch.setPower(-0.3);
-                    break;
-                case 2:
-                    h.motorIntake.setPower(0);
-                    h.motorLaunch.setPower(0);
-                    intakeValue = 0;
-                    break;
-                default:
-                    intakeValue = 0;
-            }*/
-
-            /*if (gamepad1.left_bumper) //High Position
-            {
-                h.motorArm.setTargetPosition(1);
-                h.motorArm.setPower(.6);
-
-            }
-            if (gamepad1.right_bumper) //Low Position
-            {
-                h.motorArm.setTargetPosition(-1);
-                h.motorArm.setPower(.6);
-            }
-            if (!h.motorArm.isBusy())
-            {
-                h.motorArm.setPower(0);
-            }*/
 
 
             h.servoWrist.setPosition(wristPos);

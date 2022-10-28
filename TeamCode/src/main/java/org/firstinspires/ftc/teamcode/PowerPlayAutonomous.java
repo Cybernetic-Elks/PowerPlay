@@ -3,25 +3,23 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.checkerframework.common.subtyping.qual.Bottom;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous(name="POWERPLAY", group="Auto")
-public class PowerPlayOpenCV extends LinearOpMode {
+public class PowerPlayAutonomous extends LinearOpMode {
     Hardware h = new Hardware();
     OpenCvCamera webCam;
-    public enum Position {
-        TOP,
-        MIDDLE,
-        BOTTOM
+    public enum Side {
+        ONE,
+        TWO,
+        THREE
     }
-    Position position;
+    Side side;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -82,16 +80,40 @@ public class PowerPlayOpenCV extends LinearOpMode {
 
         waitForStart();
         webCam.stopStreaming();
-
-        while (opModeIsActive())
-        {
             telemetry.addData("motorFrontLeft encoder value: ",h.motorFrontLeft.getCurrentPosition());
             telemetry.addData("motorFrontRight encoder value: ",h.motorFrontRight.getCurrentPosition());
             telemetry.addData("motorBackLeft encoder value: ",h.motorBackLeft.getCurrentPosition());
             telemetry.addData("motorBackRight encoder value: ",h.motorBackRight.getCurrentPosition());
             telemetry.addData("Color:", detector.getSide());
             telemetry.update();
-        }
+            switch (detector.getSide()) {
+                case GREEN: //bottom reversed if blue
+                    side = Side.ONE;
+                    break;
+                case PURPLE://middle reversed if blue
+                    side = Side.TWO;
+                    break;
+                case YELLOW://top reversed if blue
+                    side = Side.THREE;
+            }
+            telemetry.addData("ZONE:", detector.getSide());
+            switch (side)
+            {
+                case ONE:
+                    h.strafePureEncoder(false, h.calculateTicks(24),.5);
+                    h.sleep(4000);
+                    h.drivePureEncoder(true, h.calculateTicks(24),.6);
+                    break;
+                case TWO:
+                    h.drivePureEncoder(true, h.calculateTicks(24),.8);
+                    h.sleep(8000);
+                    break;
+                case THREE:
+                    h.strafePureEncoder(true, h.calculateTicks(24),.5);
+                    h.sleep(4000);
+                    h.drivePureEncoder(true, h.calculateTicks(24),.6);
+                    break;
+            }
 
     }
 }

@@ -44,6 +44,7 @@ public class Hardware extends LinearOpMode
     public DcMotor motorCarousel; //In use
     public DcMotor motorArm;     //In use
     public DcMotor motorWinch;   //In use
+    public DcMotor motorLift;
 
     Servo servoIntake; //In use
     Servo servoWrist; //In use
@@ -99,14 +100,20 @@ public class Hardware extends LinearOpMode
         motorBackRight = aMap.dcMotor.get("motorBackRight");
         motorBackLeft = aMap.dcMotor.get("motorBackLeft");
         motorFrontLeft = aMap.dcMotor.get("motorFrontLeft");
+
+
+        motorLift = aMap.dcMotor.get("motorLift");
+        motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         motorArm = aMap.dcMotor.get("motorArm");
         motorWinch = aMap.dcMotor.get("motorWinch");
         motorCarousel = aMap.dcMotor.get("motorCarousel");
 
+
         servoIntake = aMap.servo.get("servoIntake");
         servoWrist = aMap.servo.get("servoWrist");
 
-        MRgyro = aMap.get(ModernRoboticsI2cGyro.class, "MRgyro");
+        //MRgyro = aMap.get(ModernRoboticsI2cGyro.class, "MRgyro");
 
         motorArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorArm.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -118,6 +125,10 @@ public class Hardware extends LinearOpMode
         motorWinch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         motorCarousel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
+
+
 
 
         motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -521,15 +532,15 @@ public class Hardware extends LinearOpMode
      * @param joystickY y value of the joystick this is used for forward/backwards movement
      * @param rotation x value of right joystick, used for turning
      */
-    public void driveOmniDir(double joystickX, double joystickY, double rotation, boolean slow, double slowFactor)
+    public void driveOmniDir(double joystickX, double joystickY, double rotation, boolean slow, double slowFactor, double baseFactor)
     {
         /**                   | Forward and|
          *                    | Backwards  | Strafing | Turning |  */
         if(!slow){
-            motorFrontRight.setPower((-joystickY - joystickX - rotation) / 2);
-            motorBackRight.setPower((-joystickY + joystickX - rotation) / 2);
-            motorFrontLeft.setPower((-joystickY + joystickX + rotation) / 2);
-            motorBackLeft.setPower((-joystickY - joystickX + rotation) / 2);
+            motorFrontRight.setPower((-joystickY - joystickX - rotation) / baseFactor);
+            motorBackRight.setPower((-joystickY + joystickX - rotation) / baseFactor);
+            motorFrontLeft.setPower((-joystickY + joystickX + rotation) / baseFactor);
+            motorBackLeft.setPower((-joystickY - joystickX + rotation) / baseFactor);
         }
         else
         {

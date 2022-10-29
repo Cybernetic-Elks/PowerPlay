@@ -65,7 +65,15 @@ public class TeleOp2023 extends LinearOpMode
                 h.motorBackRight.setPower(-.3);
             }
 
-            h.driveOmniDir(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, slow, 3);
+            h.driveOmniDir(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, slow, 3, 2);
+            /*h.motorLift.setPower(-gamepad1.left_trigger);
+            h.motorLift.setPower(gamepad1.right_trigger);*/
+            if(gamepad1.a) {h.motorLift.setPower(1);}
+            if(gamepad1.b) {h.motorLift.setPower(-1);}
+            if(!gamepad1.b && !gamepad1.b)
+            {
+                h.motorLift.setPower(0);
+            }
 
         }
     }

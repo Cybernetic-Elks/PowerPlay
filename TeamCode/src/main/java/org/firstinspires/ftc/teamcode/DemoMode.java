@@ -70,9 +70,9 @@ public class DemoMode extends LinearOpMode
 
             /**Start drive system**/
             if (fastToggle) {
-                //h.driveOmniDir(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+                h.driveOmniDir(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, false, 2, 1);
             } else {
-                //h.driveOmniDir(gamepad1.left_stick_x/2, gamepad1.left_stick_y/2, gamepad1.right_stick_x/2);
+                h.driveOmniDir(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, false, 2, 2);
             }
 
             if(gamepad2.back) {

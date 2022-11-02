@@ -50,6 +50,8 @@ public class Hardware extends LinearOpMode
     Servo servoWrist; //In use
 
     //CRServo servoWrist;
+    CRServo servoIntakeClose;
+    CRServo servoIntakeFar;
 
     //ColorSensor colorSensor;
     //DistanceSensor distanceSensor;
@@ -101,32 +103,11 @@ public class Hardware extends LinearOpMode
         motorBackLeft = aMap.dcMotor.get("motorBackLeft");
         motorFrontLeft = aMap.dcMotor.get("motorFrontLeft");
 
+        servoIntakeClose = aMap.crservo.get("servoIntakeClose");
+        servoIntakeFar = aMap.crservo.get("servoIntakeFar");
 
         motorLift = aMap.dcMotor.get("motorLift");
         motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        motorArm = aMap.dcMotor.get("motorArm");
-        motorWinch = aMap.dcMotor.get("motorWinch");
-        motorCarousel = aMap.dcMotor.get("motorCarousel");
-
-
-        servoIntake = aMap.servo.get("servoIntake");
-        servoWrist = aMap.servo.get("servoWrist");
-
-        //MRgyro = aMap.get(ModernRoboticsI2cGyro.class, "MRgyro");
-
-        motorArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorArm.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        motorWinch.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorWinch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorWinch.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorWinch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        motorCarousel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-
 
 
 

@@ -35,6 +35,8 @@ public class TeleOp2023 extends LinearOpMode
             telemetry.addData("motorFrontRight: ", h.motorFrontRight.getDirection());
             telemetry.addData("motorBackLeft: ", h.motorBackLeft.getDirection());
             telemetry.addData("motorBackRight: ", h.motorBackRight.getDirection());
+            telemetry.addData("servoIntakeFar: ", h.servoIntakeFar.getPower());
+            telemetry.addData("servoIntakeClose: ", h.servoIntakeClose.getPower());
             telemetry.update();
             h.motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
             h.motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -74,6 +76,26 @@ public class TeleOp2023 extends LinearOpMode
             {
                 h.motorLift.setPower(0);
             }
+
+            if(gamepad1.x)
+            {
+                h.servoIntakeClose.setPower(1);
+                h.servoIntakeFar.setPower(-1);
+                telemetry.addData("X", "is pressed");
+            }
+            if(gamepad1.y)
+            {
+                h.servoIntakeClose.setPower(-1);
+                h.servoIntakeFar.setPower(1);
+                telemetry.addData("Y", "is pressed");
+            }
+            if(!gamepad1.x && !gamepad1.y)
+            {
+                h.servoIntakeClose.setPower(0);
+                h.servoIntakeFar.setPower(0);
+            }
+
+
 
         }
     }

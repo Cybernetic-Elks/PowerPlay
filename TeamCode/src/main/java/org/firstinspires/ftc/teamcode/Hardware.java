@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -41,13 +42,13 @@ public class Hardware extends LinearOpMode
     public DcMotor motorBackRight;//In use
     public DcMotor motorBackLeft;//In use
     public DcMotor motorFrontLeft;//In use
-    public DcMotor motorCarousel; //In use
-    public DcMotor motorArm;     //In use
-    public DcMotor motorWinch;   //In use
-    public DcMotor motorLift;
+    public DcMotor motorCarousel;
+    public DcMotor motorArm;
+    public DcMotor motorWinch;
+    public DcMotor motorLift;    //In use
 
     Servo servoIntake; //In use
-    Servo servoWrist; //In use
+    Servo servoWrist;
 
     //CRServo servoWrist;
     CRServo servoIntakeClose;
@@ -56,6 +57,7 @@ public class Hardware extends LinearOpMode
     //ColorSensor colorSensor;
     //DistanceSensor distanceSensor;
     //Rev2mDistanceSensor distanceSensor;
+    TouchSensor touch; //In use
 
     ModernRoboticsI2cGyro MRgyro;
     ModernRoboticsI2cRangeSensor MRRange;
@@ -103,19 +105,23 @@ public class Hardware extends LinearOpMode
         motorBackLeft = aMap.dcMotor.get("motorBackLeft");
         motorFrontLeft = aMap.dcMotor.get("motorFrontLeft");
 
+        touch = aMap.touchSensor.get("touchSensor");
+
         servoIntakeClose = aMap.crservo.get("servoIntakeClose");
         servoIntakeFar = aMap.crservo.get("servoIntakeFar");
 
         motorLift = aMap.dcMotor.get("motorLift");
+        motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
 
 
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);

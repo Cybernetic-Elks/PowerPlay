@@ -65,7 +65,7 @@ public class TeleOp2022Testing extends LinearOpMode
         boolean pressedLastIterationIntake = false;
         int armLevel = 3;
         boolean bButton = false, aButtonPressed = false, bButtonPressed = false;
-        h.servoIntake.setPosition(1);
+       // h.servoIntake.setPosition(1);
         ElapsedTime armTimer = new ElapsedTime();
         waitForStart();
         while (opModeIsActive())
@@ -75,7 +75,7 @@ public class TeleOp2022Testing extends LinearOpMode
             //telemetry.addData("Distance: ",h.distanceSensor.getDistance(DistanceUnit.INCH));
             telemetry.addData("motorWinch Position: ", h.motorWinch.getCurrentPosition() + " busy =" + h.motorWinch.isBusy());
             telemetry.addData("motorArm Position: ", h.motorArm.getCurrentPosition() + " busy =" + h.motorArm.isBusy());
-            telemetry.addData("servoIntake: ", h.servoIntake.getPosition());
+           // telemetry.addData("servoIntake: ", h.servoIntake.getPosition());
             telemetry.addData("motorFrontLeft encoder value: ",h.motorFrontLeft.getCurrentPosition());
             telemetry.addData("motorFrontRight encoder value: ",h.motorFrontRight.getCurrentPosition());
             telemetry.addData("motorBackLeft encoder value: ",h.motorBackLeft.getCurrentPosition());
@@ -134,11 +134,11 @@ public class TeleOp2022Testing extends LinearOpMode
             }*/
             if(gamepad1.start)
             {
-                h.servoIntake.setPosition(.57);
+                //h.servoIntake.setPosition(.57);
             }
             if(gamepad1.back)
             {
-                h.servoIntake.setPosition(1);
+                //h.servoIntake.setPosition(1);
             }
 
             //.1 is open
@@ -222,7 +222,7 @@ public class TeleOp2022Testing extends LinearOpMode
                         // tweaked for each robot.
 
                         // set the lift dump to dump
-                        h.servoIntake.setPosition(0);
+                        //h.servoIntake.setPosition(0);
 
                         armTimer.reset();
                         armState = armState.ARM_DUMP;

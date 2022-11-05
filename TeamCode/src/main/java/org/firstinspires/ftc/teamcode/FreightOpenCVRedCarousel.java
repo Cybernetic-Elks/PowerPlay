@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -11,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-
+@Disabled
 @Autonomous(name="Red Carousel Detector", group="Auto")
 public class FreightOpenCVRedCarousel extends LinearOpMode {
     Hardware h = new Hardware();
@@ -80,7 +81,7 @@ public class FreightOpenCVRedCarousel extends LinearOpMode {
         telemetry.addData("imu calib status", h.imu.getCalibrationStatus().toString());
         telemetry.update();
 
-        h.servoIntake.setPosition(1);
+        //h.servoIntake.setPosition(1);
 
         waitForStart();
         switch (detector.getLocation()) {
@@ -187,7 +188,7 @@ public class FreightOpenCVRedCarousel extends LinearOpMode {
                     telemetry.update();
                 }
 
-                h.servoIntake.setPosition(0);
+                //h.servoIntake.setPosition(0);
 
                 h.sleep(300);
 
@@ -217,7 +218,7 @@ public class FreightOpenCVRedCarousel extends LinearOpMode {
                     telemetry.update();
                 }
 
-                h.servoIntake.setPosition(0);
+                //h.servoIntake.setPosition(0);
 
                 h.sleep(300);
 
@@ -247,7 +248,7 @@ public class FreightOpenCVRedCarousel extends LinearOpMode {
                     telemetry.update();
                 }
 
-                h.servoIntake.setPosition(0);
+                //h.servoIntake.setPosition(0);
 
                 h.sleep(1000);
 

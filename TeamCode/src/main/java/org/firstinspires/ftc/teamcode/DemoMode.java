@@ -54,7 +54,7 @@ public class DemoMode extends LinearOpMode
             telemetry.addData("motorWinch Power", winchPow);
             telemetry.addData("motorArm Position: ", h.motorArm.getCurrentPosition() + " busy =" + h.motorArm.isBusy());
             telemetry.addData("motorArm Power: ", h.motorArm.getPower());
-            telemetry.addData("servoIntake: ", h.servoIntake.getPosition());
+            //telemetry.addData("servoIntake: ", h.servoIntake.getPosition());
             telemetry.addData("fast boolean", fast);
             telemetry.addData("fastToggle boolean", fastToggle);
             telemetry.update();
@@ -124,19 +124,19 @@ public class DemoMode extends LinearOpMode
 
             if(pressedIntake & !pressedLastIterationIntake)
             {
-                if(h.servoIntake.getPosition() > .8)
+                /*if(h.servoIntake.getPosition() > .8)
                 {
                     h.servoIntake.setPosition(.57); //0 .1
                 }
                 else
                 {
                     h.servoIntake.setPosition(1); //1 .3
-                }
+                }*/
 
             }
             if (gamepad1.y)
             {
-                h.servoIntake.setPosition(.45);
+                //h.servoIntake.setPosition(.45);
             }
 
             /** END CLAW CONTROL**/

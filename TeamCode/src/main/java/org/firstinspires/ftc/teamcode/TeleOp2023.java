@@ -29,67 +29,132 @@ public class TeleOp2023 extends LinearOpMode
         telemetry.addData("Main Initialization ", "complete");
         telemetry.update();
         boolean slow = false;
+        boolean slow2 = false;
+        boolean descending = false;
+        final int UPPER_LIMIT = 12500;
+        final int HIGH_GOAL = 10530;
+        final int MID_GOAL = 7420;
+        final int LOW_GOAL = 4400;
+        final int CONE_HEIGHT = 0;
+
+
         waitForStart();
         while (opModeIsActive()) {
             telemetry.addData("motorFrontLeft: ", h.motorFrontLeft.getDirection());
             telemetry.addData("motorFrontRight: ", h.motorFrontRight.getDirection());
             telemetry.addData("motorBackLeft: ", h.motorBackLeft.getDirection());
             telemetry.addData("motorBackRight: ", h.motorBackRight.getDirection());
-            telemetry.addData("servoIntakeFar: ", h.servoIntakeFar.getPower());
             telemetry.addData("servoIntakeClose: ", h.servoIntakeClose.getPower());
+            telemetry.addData("servoIntakeFar: ", h.servoIntakeFar.getPower());
+            telemetry.addData("motorLift current Pos: ", h.motorLift.getCurrentPosition());
+            telemetry.addData("touchSensor is pressed: ", h.touch.isPressed());
             telemetry.update();
             h.motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
             h.motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
             h.motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
             h.motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
             slow = gamepad1.a;
+            slow2 = gamepad2.y;
             /**Start drive system**/
-            if (gamepad1.dpad_left || gamepad2.dpad_left) {
-                h.motorFrontLeft.setPower(-.3);
-                h.motorFrontRight.setPower(.3);
-                h.motorBackLeft.setPower(-.3);
-                h.motorBackRight.setPower(.3);
-            } else if (gamepad1.dpad_right || gamepad2.dpad_right) {
-                h.motorFrontLeft.setPower(.3);
-                h.motorFrontRight.setPower(-.3);
-                h.motorBackLeft.setPower(.3);
-                h.motorBackRight.setPower(-.3);
+            if (gamepad1.dpad_left) {
+                h.motorFrontLeft.setPower(-.4);
+                h.motorFrontRight.setPower(.4);
+                h.motorBackLeft.setPower(-.4);
+                h.motorBackRight.setPower(.4);
+            } else if (gamepad1.dpad_right) {
+                h.motorFrontLeft.setPower(.4);
+                h.motorFrontRight.setPower(-.4);
+                h.motorBackLeft.setPower(.4);
+                h.motorBackRight.setPower(-.4);
             }
-            if (gamepad1.dpad_up || gamepad2.dpad_up) {
-                h.motorFrontLeft.setPower(.3);
-                h.motorFrontRight.setPower(.3);
-                h.motorBackLeft.setPower(.3);
-                h.motorBackRight.setPower(.3);
-            } else if (gamepad1.dpad_down || gamepad2.dpad_down) {
-                h.motorFrontLeft.setPower(-.3);
-                h.motorFrontRight.setPower(-.3);
-                h.motorBackLeft.setPower(-.3);
-                h.motorBackRight.setPower(-.3);
+            if (gamepad1.dpad_up) {
+                h.setDrivePower((float).4);
+            } else if (gamepad1.dpad_down) {
+                h.setDrivePower((float)-.4);
             }
 
-            h.driveOmniDir(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, slow, 3, 2);
+            h.driveOmniDir(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, slow, 5, 2);
             /*h.motorLift.setPower(-gamepad1.left_trigger);
             h.motorLift.setPower(gamepad1.right_trigger);*/
-            if(gamepad1.a) {h.motorLift.setPower(1);}
-            if(gamepad1.b) {h.motorLift.setPower(-1);}
-            if(!gamepad1.b && !gamepad1.b)
+            if(gamepad2.dpad_up /* && h.motorLift <= UPPER_LIMIT */)
+            {
+                if (slow2)
+                {
+                    h.motorLift.setPower(.7);
+
+                }
+                else
+                {
+                    h.motorLift.setPower(1);
+                }
+            }
+            if(gamepad2.dpad_down && !h.touch.isPressed())
+            {
+                if (slow2)
+                {
+                    h.motorLift.setPower(-.6);
+
+                }
+                else
+                {
+                    h.motorLift.setPower(-1);
+                }
+
+            }
+            if(!gamepad2.dpad_up && h.touch.isPressed())
+            {
+                h.motorLift.setPower(0);
+            }
+            if(!gamepad2.dpad_up && !gamepad2.dpad_down)
             {
                 h.motorLift.setPower(0);
             }
 
-            if(gamepad1.x)
+            /*
+            if (gamepad2.dpad_up)
             {
-                h.servoIntakeClose.setPower(1);
-                h.servoIntakeFar.setPower(-1);
-                telemetry.addData("X", "is pressed");
+                h.motorLift.setTargetPosition(HIGH_GOAL);
+                h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                h.motorLift.setPower(1);
             }
-            if(gamepad1.y)
+            if (gamepad2.dpad_left)
+            {
+                h.motorLift.setTargetPosition(MID_GOAL);
+                h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                h.motorLift.setPower(1);
+            }
+            if (gamepad2.dpad_down)
+            {
+                h.motorLift.setTargetPosition(LOW_GOAL);
+                h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                h.motorLift.setPower(1);
+            }
+            if (gamepad2.dpad_right)
+            {
+                h.motorLift.setPower(-1);
+                descending = true;
+            }
+            if(descending)
+            {
+                if(h.touchSensor.isPressed())
+                {
+                    descending = false;
+                    h.motorLift.setPower(0);
+                }
+            }
+            */
+
+            if(gamepad2.a)
             {
                 h.servoIntakeClose.setPower(-1);
                 h.servoIntakeFar.setPower(1);
-                telemetry.addData("Y", "is pressed");
             }
-            if(!gamepad1.x && !gamepad1.y)
+            if(gamepad2.b)
+            {
+                h.servoIntakeClose.setPower(1);
+                h.servoIntakeFar.setPower(-1);
+            }
+            if(!gamepad2.a && !gamepad2.b)
             {
                 h.servoIntakeClose.setPower(0);
                 h.servoIntakeFar.setPower(0);

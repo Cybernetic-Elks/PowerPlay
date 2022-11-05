@@ -74,7 +74,7 @@ public class FreightOpenCVRedFreight extends LinearOpMode {
         telemetry.addData("imu calib status", h.imu.getCalibrationStatus().toString());
         telemetry.update();
 
-        h.servoIntake.setPosition(1);
+        //h.servoIntake.setPosition(1);
 
         waitForStart();
         telemetry.addData("iteration:", 3);
@@ -113,7 +113,7 @@ public class FreightOpenCVRedFreight extends LinearOpMode {
                 }
 
                 h.sleep(300);
-                h.servoIntake.setPosition(0);
+                //h.servoIntake.setPosition(0);
                 h.sleep(300);
 
                 h.motorWinch.setTargetPosition(0);
@@ -163,7 +163,7 @@ public class FreightOpenCVRedFreight extends LinearOpMode {
                 }
 
                 h.sleep(300);
-                h.servoIntake.setPosition(0);
+                //h.servoIntake.setPosition(0);
                 h.sleep(300);
 
                 h.motorWinch.setTargetPosition(0);
@@ -212,7 +212,7 @@ public class FreightOpenCVRedFreight extends LinearOpMode {
                 }
 
                 h.sleep(300);
-                h.servoIntake.setPosition(0);
+                //h.servoIntake.setPosition(0);
                 h.sleep(300);
 
                 h.motorWinch.setTargetPosition(0);

@@ -49,7 +49,7 @@ public class TeleOp2022 extends LinearOpMode
             //telemetry.addData("Distance: ",h.distanceSensor.getDistance(DistanceUnit.INCH));
             telemetry.addData("motorWinch Position: ", h.motorWinch.getCurrentPosition() + " busy =" + h.motorWinch.isBusy());
             telemetry.addData("motorArm Position: ", h.motorArm.getCurrentPosition() + " busy =" + h.motorArm.isBusy());
-            telemetry.addData("servoIntake: ", h.servoIntake.getPosition());
+            //telemetry.addData("servoIntake: ", h.servoIntake.getPosition());
             telemetry.addData("servoWrist: ", h.servoWrist.getPosition());
             telemetry.addData("motorFrontLeft: ", h.motorFrontLeft.getDirection());
             telemetry.addData("motorFrontRight: ", h.motorFrontRight.getDirection());
@@ -112,19 +112,19 @@ public class TeleOp2022 extends LinearOpMode
              **/
             if(pressedIntake & !pressedLastIterationIntake)
             {
-                if(h.servoIntake.getPosition() > .8)
+                if(true/*h.servoIntake.getPosition() > .8*/)
                 {
-                    h.servoIntake.setPosition(.57); //0 .1
+                    //h.servoIntake.setPosition(.57); //0 .1
                 }
                 else
                 {
-                    h.servoIntake.setPosition(1); //1 .3
+                    //h.servoIntake.setPosition(1); //1 .3
                 }
 
             }
             if (gamepad1.y)
             {
-                h.servoIntake.setPosition(0);
+                //h.servoIntake.setPosition(0);
             }
 
             /** END CLAW CONTROL**/

@@ -46,10 +46,10 @@ public class PowerPlayAutonomous extends LinearOpMode {
             telemetry.addData("Init Error:", "Something failed to initialize");
             e.printStackTrace();
         }
-        h.motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        h.motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        h.motorFrontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        h.motorBackLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        h.motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        h.motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        h.motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        h.motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
@@ -105,8 +105,11 @@ public class PowerPlayAutonomous extends LinearOpMode {
                     h.drivePureEncoder(true, h.calculateTicks(24),.6);
                     break;
                 case TWO:
+                    h.strafePureEncoder(true, h.calculateTicks(4),.5);
+                    h.sleep(3000);
                     h.drivePureEncoder(true, h.calculateTicks(24),.8);
-                    h.sleep(8000);
+
+
                     break;
                 case THREE:
                     h.strafePureEncoder(true, h.calculateTicks(24),.5);

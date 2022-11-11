@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -101,22 +102,25 @@ public class PowerPlayAutonomous extends LinearOpMode {
             {
                 case ONE:
                     h.strafePureEncoder(false, h.calculateTicks(24),.5);
-                    h.sleep(4000);
-                    h.drivePureEncoder(true, h.calculateTicks(24),.6);
+                    h.sleep(2500);
+                    h.drivePureEncoder(true, h.calculateTicks(24),.4);
                     break;
                 case TWO:
                     h.strafePureEncoder(true, h.calculateTicks(4),.5);
-                    h.sleep(3000);
-                    h.drivePureEncoder(true, h.calculateTicks(24),.8);
+                    h.sleep(2500);
+                    h.drivePureEncoder(true, h.calculateTicks(24),.6);
 
 
                     break;
                 case THREE:
-                    h.strafePureEncoder(true, h.calculateTicks(24),.5);
-                    h.sleep(4000);
-                    h.drivePureEncoder(true, h.calculateTicks(24),.6);
+                    h.strafePureEncoder(true, h.calculateTicks(28),.5);
+                    h.sleep(2500);
+                    h.drivePureEncoder(true, h.calculateTicks(24),.4);
                     break;
             }
-
+            h.motorLift.setTargetPosition(10454);
+            h.motorLift.setPower(1);
+            h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            h.sleep(20000);
     }
 }

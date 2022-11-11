@@ -53,7 +53,7 @@ public class TeleOp2023 extends LinearOpMode
             h.motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
             h.motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
             h.motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-            slow = gamepad1.a;
+            slow = gamepad1.right_trigger > 0.01 ? true: false;
             slow2 = gamepad2.y;
             /**Start drive system**/
             if (gamepad1.dpad_left) {

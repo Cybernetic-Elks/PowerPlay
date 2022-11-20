@@ -4,9 +4,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 public class PIDController {
-    double Kp;
-    double Ki;
-    double Kd;
+    double Kp = 0;
+    double Ki = 0;
+    double Kd = 0;
 
     double integralSum = 0;
     double lastError = 0;
@@ -48,8 +48,8 @@ public class PIDController {
 
         double out = (Kp * error) + (Ki * integralSum) + (Kd * derivative);
 
-        timer.reset();
         lastError = error;
+        timer.reset();
 
         return out;
 

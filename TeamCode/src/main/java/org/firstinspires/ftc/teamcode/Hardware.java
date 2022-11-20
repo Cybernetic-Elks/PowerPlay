@@ -118,15 +118,15 @@ public class Hardware extends LinearOpMode
 
 
 
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
         motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -575,9 +575,26 @@ public class Hardware extends LinearOpMode
          motorBackLeft.setPower(-joystickY - joystickX - rotation);*/
     }
 
-    public void driveFieldRelative(double joystickX, double joystickY, double turn)
+    public void driveFieldRelative(double joystickX, double joystickY, double turn, boolean slow, double slowFactor, double baseFactor)
     {
-        rotate = turn;
+        Orientation currentHeading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+
+
+
+        // convert to polar
+        double theta = Math.atan2(joystickX, joystickY);
+        double r = Math.hypot(joystickX, joystickY);
+        //rotate angle
+        theta = AngleUnit.normalizeRadians(theta - currentHeading.firstAngle);
+
+        //convert back to cartesion
+        double newJoystickX = r * Math.sin(theta);
+        double newJoystickY = r * Math.cos(theta);
+
+        driveOmniDir(newJoystickX,newJoystickY, turn, slow, slowFactor, baseFactor);
+
+
+        /*rotate = turn;
         forward = joystickY * -1;
         strafe = joystickX;
 
@@ -592,7 +609,7 @@ public class Hardware extends LinearOpMode
         motorFrontRight.setPower(forward - strafe - rotate);
         motorBackRight.setPower(forward + strafe - rotate);
         motorFrontLeft.setPower(forward + strafe + rotate);
-        motorBackLeft.setPower(forward - strafe + rotate);
+        motorBackLeft.setPower(forward - strafe + rotate); */
     }
 
 

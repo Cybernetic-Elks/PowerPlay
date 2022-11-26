@@ -98,29 +98,51 @@ public class PowerPlayAutonomous extends LinearOpMode {
                     side = Side.THREE;
             }
             telemetry.addData("ZONE:", detector.getSide());
+            //Start raising arm to low tower position
+            h.motorLift.setTargetPosition(4141);
+            h.motorLift.setPower(1);
+
+            //Drive straight forward to be in line with low pole
+            h.strafePureEncoder(true, h.calculateTicks(4),.5);
+            h.sleep(2500);
+            h.drivePureEncoder(true, h.calculateTicks(24),.6);
+            h.sleep(2000);
+
+            //Turn to line up with the low pole
+            h.turnIMU(90,.5,.3);
+            h.sleep(1000);
+
+            //Drive towards pole to ready for drop
+            h.drivePureEncoder(true,h.calculateTicks(6),.6);
+
+            //Drop cone (Directions might be wrong)
+            h.servoIntakeClose.setPower(-1);
+            h.servoIntakeFar.setPower(1);
+            h.sleep(1000);
+
+            //Return to mid parking zone.
+            h.drivePureEncoder(false, h.calculateTicks(6), .6);
+            h.sleep(1000);
+
+            //Park in correct zone
             switch (side)
             {
                 case ONE:
-                    h.strafePureEncoder(false, h.calculateTicks(24),.5);
+                    /*h.strafePureEncoder(false, h.calculateTicks(24),.5);
                     h.sleep(2500);
-                    h.drivePureEncoder(true, h.calculateTicks(24),.4);
+                    h.drivePureEncoder(true, h.calculateTicks(24),.4);*/
                     break;
                 case TWO:
-                    h.strafePureEncoder(true, h.calculateTicks(4),.5);
+                    /*h.strafePureEncoder(true, h.calculateTicks(4),.5);
                     h.sleep(2500);
-                    h.drivePureEncoder(true, h.calculateTicks(24),.6);
-
-
+                    h.drivePureEncoder(true, h.calculateTicks(24),.6);*/
                     break;
                 case THREE:
-                    h.strafePureEncoder(true, h.calculateTicks(28),.5);
+                    /*h.strafePureEncoder(true, h.calculateTicks(28),.5);
                     h.sleep(2500);
                     h.drivePureEncoder(true, h.calculateTicks(24),.4);
+                    */
                     break;
             }
-            h.motorLift.setTargetPosition(10454);
-            h.motorLift.setPower(1);
-            h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            h.sleep(20000);
     }
 }

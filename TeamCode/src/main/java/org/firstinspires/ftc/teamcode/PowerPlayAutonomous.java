@@ -99,25 +99,27 @@ public class PowerPlayAutonomous extends LinearOpMode {
             }
             telemetry.addData("ZONE:", detector.getSide());
             //Start raising arm to low tower position
-            h.motorLift.setTargetPosition(4141);
+            h.motorLift.setTargetPosition(4041);
+            h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             h.motorLift.setPower(1);
 
             //Drive straight forward to be in line with low pole
             h.strafePureEncoder(true, h.calculateTicks(4),.5);
             h.sleep(2500);
-            h.drivePureEncoder(true, h.calculateTicks(24),.6);
+            h.drivePureEncoder(true, h.calculateTicks(15),.6);
             h.sleep(2000);
 
             //Turn to line up with the low pole
-            h.turnIMU(90,.5,.3);
+            h.turnIMU(-90,.5,.3);
             h.sleep(1000);
 
             //Drive towards pole to ready for drop
-            h.drivePureEncoder(true,h.calculateTicks(6),.6);
+            h.drivePureEncoder(true, h.calculateTicks(6),.6);
+            h.sleep(2000);
 
             //Drop cone (Directions might be wrong)
-            h.servoIntakeClose.setPower(-1);
-            h.servoIntakeFar.setPower(1);
+            h.servoIntakeClose.setPower(1);
+            h.servoIntakeFar.setPower(-1);
             h.sleep(1000);
 
             //Return to mid parking zone.

@@ -114,7 +114,11 @@ public class TeleOp2023 extends LinearOpMode
                 h.motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 h.motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
+            if(gamepad1.a)
+            {
+                h.motorLift.setTargetPosition(4041);
 
+            }
             /*
             if (gamepad2.dpad_up)
             {

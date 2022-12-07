@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-
+//TODO Make it go to a high pole
 @Autonomous(name="POWERPLAY", group="Auto")
 public class PowerPlayAutonomous extends LinearOpMode {
     Hardware h = new Hardware();
@@ -103,69 +103,54 @@ public class PowerPlayAutonomous extends LinearOpMode {
             h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             h.motorLift.setPower(1);
 
-            //Drive straight forward to be in line with low pole
-            h.strafePureEncoder(true, h.calculateTicks(4),.5);
-            h.sleep(2000);
-            h.drivePureEncoder(true, h.calculateTicks(13),.25);
-            h.sleep(1500);
+            h.drivePureEncoder(true,h.calculateTicks(4),.2);
+            h.sleep(2500);
 
-            //Turn to line up with the low pole
-            h.turnIMU(-90,.5,.2);
-            h.sleep(1000);
+            h.strafePureEncoder(true,h.calculateTicks(15),.5);
+            h.sleep(2500);
 
-            //Drive towards pole to ready for drop
-            h.drivePureEncoder(true, h.calculateTicks(6),.6);
-            h.sleep(1500);
+            h.drivePureEncoder(true,h.calculateTicks(6),.2);
+            h.sleep(2500);
 
             //Drop cone
             h.servoIntakeClose.setPower(-1);
             h.servoIntakeFar.setPower(1);
-            h.sleep(1500);
+            h.sleep(1700);
             h.servoIntakeClose.setPower(0);
             h.servoIntakeFar.setPower(0);
 
-            //Return to mid parking zone.
-            h.drivePureEncoder(false, h.calculateTicks(6), .6);
-            h.sleep(1000);
-
-            h.turnIMU(90,.5,.2);
-            h.sleep(2000);
-
-            h.strafePureEncoder(true, h.calculateTicks(15),.5);
+            h.drivePureEncoder(false, h.calculateTicks(5),.6);
             h.sleep(2500);
-
-            h.drivePureEncoder(true, h.calculateTicks(24),.25);
-            h.sleep(2000);
-
-            h.motorLift.setTargetPosition(4041);
-            h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            h.motorLift.setPower(1);
-            
-            h.motorLift.setPower(-1);
-            if(h.touch.isPressed())
-            {
-                h.motorLift.setPower(0);
-            }
-            h.sleep(10000);
-
             //Park in correct zone
             switch (side)
             {
                 case ONE:
-                    /*h.strafePureEncoder(false, h.calculateTicks(24),.5);
+                    h.strafePureEncoder(true, h.calculateTicks(14),.5);
                     h.sleep(2500);
-                    h.drivePureEncoder(true, h.calculateTicks(24),.4);*/
+                    h.drivePureEncoder(true, h.calculateTicks(44),.4);
+                    h.sleep(2500);
+                    h.turnIMU(90,.5,.3);
+                    h.sleep(1000);
+                    h.drive(true,32,.5);
+                    //TODO make it drive a bit more forward maybe
                     break;
                 case TWO:
-                    /*h.strafePureEncoder(true, h.calculateTicks(4),.5);
+                    h.strafePureEncoder(true, h.calculateTicks(14),.5);
                     h.sleep(2500);
-                    h.drivePureEncoder(true, h.calculateTicks(24),.6);*/
+                    h.drivePureEncoder(true, h.calculateTicks(44),.4);
+                    h.sleep(2500);
+                    h.turnIMU(90,.5,.3);
+                    h.sleep(1000);
+                    h.drive(true,24,.5);
+
                     break;
                 case THREE:
-                    /*h.strafePureEncoder(true, h.calculateTicks(28),.5);
+                    h.strafePureEncoder(true, h.calculateTicks(14),.5);
                     h.sleep(2500);
-                    h.drivePureEncoder(true, h.calculateTicks(24),.4);
-                    */
+                    h.drivePureEncoder(true, h.calculateTicks(44),.5);
+                    h.sleep(2500);
+                    h.turnIMU(90,.5,.3);
+                    h.sleep(1000);
                     break;
             }
     }

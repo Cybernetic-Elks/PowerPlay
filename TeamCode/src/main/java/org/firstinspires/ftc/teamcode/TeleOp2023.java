@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name = "2023 TeleOp - CHOOSE THIS ONE", group = "TeleOp")
 /**
@@ -19,6 +20,7 @@ public class TeleOp2023 extends LinearOpMode
     @Override
     public void runOpMode() {
         Hardware h = new Hardware();
+        ElapsedTime runtime = new ElapsedTime();
 
         try {
             h.init(hardwareMap, telemetry);
@@ -28,6 +30,7 @@ public class TeleOp2023 extends LinearOpMode
         }
         telemetry.addData("Main Initialization ", "complete");
         telemetry.update();
+        boolean pressedLastIterationOuttake = false;
         boolean slow = false;
         boolean slow2 = false;
         boolean descending = false;
@@ -40,6 +43,7 @@ public class TeleOp2023 extends LinearOpMode
 
         waitForStart();
         while (opModeIsActive()) {
+            boolean pressedOutake = gamepad2.a;
             telemetry.addData("motorFrontLeft: ", h.motorFrontLeft.getDirection());
             telemetry.addData("motorFrontRight: ", h.motorFrontRight.getDirection());
             telemetry.addData("motorBackLeft: ", h.motorBackLeft.getDirection());
@@ -55,6 +59,7 @@ public class TeleOp2023 extends LinearOpMode
             h.motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
             slow = gamepad1.right_trigger > 0.01 ? true: false;
             slow2 = gamepad2.y;
+
             /**Start drive system**/
             if (gamepad1.dpad_left) {
                 h.motorFrontLeft.setPower(-.4);
@@ -68,14 +73,22 @@ public class TeleOp2023 extends LinearOpMode
                 h.motorBackRight.setPower(-.4);
             }
             if (gamepad1.dpad_up) {
-                h.setDrivePower((float).4);
+                h.motorFrontLeft.setPower(.4);
+                h.motorFrontRight.setPower(.4);
+                h.motorBackLeft.setPower(.4);
+                h.motorBackRight.setPower(.4);
             } else if (gamepad1.dpad_down) {
-                h.setDrivePower((float)-.4);
+                h.motorFrontLeft.setPower(-.4);
+                h.motorFrontRight.setPower(-.4);
+                h.motorBackLeft.setPower(-.4);
+                h.motorBackRight.setPower(-.4);
             }
 
             h.driveOmniDir(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, slow, 5, 2);
             /*h.motorLift.setPower(-gamepad1.left_trigger);
             h.motorLift.setPower(gamepad1.right_trigger);*/
+
+            //Motor Lift Controls
             if(gamepad2.dpad_up /* && h.motorLift <= UPPER_LIMIT */)
             {
                 if (slow2)
@@ -114,11 +127,6 @@ public class TeleOp2023 extends LinearOpMode
                 h.motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 h.motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
-            if(gamepad1.a)
-            {
-                h.motorLift.setTargetPosition(4041);
-
-            }
             /*
             if (gamepad2.dpad_up)
             {
@@ -153,21 +161,29 @@ public class TeleOp2023 extends LinearOpMode
             }
             */
 
-            if(gamepad2.a)
-            {
-                h.servoIntakeClose.setPower(-1);
-                h.servoIntakeFar.setPower(1);
+            //Outake
+            if(pressedOutake & !pressedLastIterationOuttake) {
+                runtime.reset();
+                while (runtime.time() < 1) {
+                    h.servoIntakeClose.setPower(-1);
+                    h.servoIntakeFar.setPower(1);
+                }
             }
+            //Intake
             if(gamepad2.b)
             {
-                h.servoIntakeClose.setPower(1);
-                h.servoIntakeFar.setPower(-1);
+                    h.servoIntakeClose.setPower(1);
+                    h.servoIntakeFar.setPower(-1);
+
             }
             if(!gamepad2.a && !gamepad2.b)
             {
                 h.servoIntakeClose.setPower(0);
                 h.servoIntakeFar.setPower(0);
             }
+
+
+            pressedLastIterationOuttake = pressedOutake;
 
 
 

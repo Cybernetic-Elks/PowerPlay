@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 //TODO Add limts to other parts of robot, possibly to main TeleOp
-@TeleOp(name = "Demo TeleOp - FOR PRESENTATION", group = "TeleOp")
+@TeleOp(name = "Demo TeleOp", group = "TeleOp")
 /**
  * Programmer:    Sean Pakros & Kairon Johnson
  * Date Created:  5/28/22

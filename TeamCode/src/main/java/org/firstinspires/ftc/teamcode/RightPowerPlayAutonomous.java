@@ -10,9 +10,10 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+
 //TODO Make it go to a high pole
-@Autonomous(name="LEFT POWERPLAY", group="Auto")
-public class PowerPlayAutonomous extends LinearOpMode {
+@Autonomous(name="RIGHT POWERPLAY", group="Auto")
+public class RightPowerPlayAutonomous extends LinearOpMode {
     Hardware h = new Hardware();
     OpenCvCamera webCam;
     public enum Side {
@@ -106,7 +107,7 @@ public class PowerPlayAutonomous extends LinearOpMode {
             h.drivePureEncoder(true,h.calculateTicks(4),.2);
             h.sleep(2500);
 
-            h.strafePureEncoder(true,h.calculateTicks(15),.5);
+            h.strafePureEncoder(false,h.calculateTicks(6),.5);
             h.sleep(2500);
 
             h.drivePureEncoder(true,h.calculateTicks(6),.2);
@@ -125,31 +126,31 @@ public class PowerPlayAutonomous extends LinearOpMode {
             switch (side)
             {
                 case ONE:
-                    h.strafePureEncoder(true, h.calculateTicks(14),.5);
+                    h.strafePureEncoder(false, h.calculateTicks(14),.5);
                     h.sleep(2500);
                     h.drivePureEncoder(true, h.calculateTicks(44),.4);
                     h.sleep(2500);
-                    h.turnIMU(90,.5,.3);
+                    h.turnIMU(-90,.5,.3);
                     h.sleep(1000);
                     h.drive(true,40,.5);
                     //TODO make it drive a bit more forward maybe
                     break;
                 case TWO:
-                    h.strafePureEncoder(true, h.calculateTicks(14),.5);
+                    h.strafePureEncoder(false, h.calculateTicks(14),.5);
                     h.sleep(2500);
                     h.drivePureEncoder(true, h.calculateTicks(44),.4);
                     h.sleep(2500);
-                    h.turnIMU(90,.5,.3);
+                    h.turnIMU(-90,.5,.3);
                     h.sleep(1000);
                     h.drive(true,18,.5);
 
                     break;
                 case THREE:
-                    h.strafePureEncoder(true, h.calculateTicks(14),.5);
+                    h.strafePureEncoder(false, h.calculateTicks(14),.5);
                     h.sleep(2500);
                     h.drivePureEncoder(true, h.calculateTicks(44),.5);
                     h.sleep(2500);
-                    h.turnIMU(90,.5,.3);
+                    h.turnIMU(-90,.5,.3);
                     h.sleep(1000);
                     break;
             }

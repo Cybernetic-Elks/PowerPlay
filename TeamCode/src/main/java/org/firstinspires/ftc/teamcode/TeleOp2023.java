@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name = "2023 TeleOp - CHOOSE THIS ONE", group = "TeleOp")
 /**
- * Programmer:
  * Date Created:  7/30/2022
  * Purpose: This is going to be our main teleop for PowerPlay, but for now is just to test on the new base when it is finished.
  */
@@ -57,7 +56,7 @@ public class TeleOp2023 extends LinearOpMode
             h.motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
             h.motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
             h.motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-            slow = gamepad1.right_trigger > 0.01 ? true: false;
+            slow = gamepad1.right_trigger > 0.01;
             slow2 = gamepad2.y;
 
             /**Start drive system**/
@@ -113,6 +112,7 @@ public class TeleOp2023 extends LinearOpMode
                     h.motorLift.setPower(-1);
                 }
 
+
             }
             if(!gamepad2.dpad_up && h.touch.isPressed())
             {
@@ -162,12 +162,9 @@ public class TeleOp2023 extends LinearOpMode
             */
 
             //Outake
-            if(pressedOutake & !pressedLastIterationOuttake) {
-                runtime.reset();
-                while (runtime.time() < 1) {
-                    h.servoIntakeClose.setPower(-1);
-                    h.servoIntakeFar.setPower(1);
-                }
+            if(gamepad2.a) {
+                h.servoIntakeClose.setPower(-1);
+                h.servoIntakeFar.setPower(1);
             }
             //Intake
             if(gamepad2.b)
@@ -182,10 +179,7 @@ public class TeleOp2023 extends LinearOpMode
                 h.servoIntakeFar.setPower(0);
             }
 
-
             pressedLastIterationOuttake = pressedOutake;
-
-
 
         }
     }

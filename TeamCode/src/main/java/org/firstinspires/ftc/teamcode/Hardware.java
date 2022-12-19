@@ -46,13 +46,15 @@ public class Hardware extends LinearOpMode
     public DcMotor motorArm;
     public DcMotor motorWinch;
     public DcMotor motorLift;    //In use
+    public DcMotor motorLift2;   //In use
+    public DcMotor motorTable;   //In use
 
-    Servo servoIntake; //In use
+    Servo servoIntake;
     Servo servoWrist;
 
     //CRServo servoWrist;
-    CRServo servoIntakeClose;
-    CRServo servoIntakeFar;
+    CRServo servoIntakeClose; //In use
+    CRServo servoIntakeFar; //In use
 
     //ColorSensor colorSensor;
     //DistanceSensor distanceSensor;
@@ -137,6 +139,14 @@ public class Hardware extends LinearOpMode
         motorBackRight.setPower(0);
         motorFrontLeft.setPower(0);
         motorBackLeft.setPower(0);
+
+        motorLift2 = aMap.dcMotor.get("motorLift2");
+        motorLift2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorLift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        motorTable = aMap.dcMotor.get("motorTable");
+        motorTable.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorTable.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     /**

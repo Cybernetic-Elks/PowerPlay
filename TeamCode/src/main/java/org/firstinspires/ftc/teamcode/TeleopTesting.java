@@ -100,11 +100,13 @@ public class TeleopTesting extends LinearOpMode
                 if (slow2)
                 {
                     h.motorLift.setPower(.7);
+                    h.motorLift2.setPower(.7);
 
                 }
                 else
                 {
                     h.motorLift.setPower(1);
+                    h.motorLift2.setPower(1);
                 }
             }
             if(gamepad2.dpad_down && !h.touch.isPressed())
@@ -112,25 +114,19 @@ public class TeleopTesting extends LinearOpMode
                 if (slow2)
                 {
                     h.motorLift.setPower(-.6);
+                    h.motorLift2.setPower(-.6);
 
                 }
                 else
                 {
                     h.motorLift.setPower(-1);
+                    h.motorLift2.setPower(-1);
                 }
             }
-            if(!gamepad2.dpad_up && h.touch.isPressed())
+            if((!gamepad2.dpad_up && h.touch.isPressed()) || (!gamepad2.dpad_up && !gamepad2.dpad_down))
             {
                 h.motorLift.setPower(0);
-            }
-            if(!gamepad2.dpad_up && !gamepad2.dpad_down)
-            {
-                h.motorLift.setPower(0);
-            }
-            if (h.touch.isPressed())
-            {
-                h.motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                h.motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                h.motorLift2.setPower(0);
             }
 
 
@@ -247,6 +243,19 @@ public class TeleopTesting extends LinearOpMode
 
             pressedLastIterationOuttake = pressedOutake;
 
+            //Turn table
+            if(gamepad1.left_bumper)
+            {
+                h.motorTable.setPower(1);
+            }
+            else if(gamepad1.right_bumper)
+            {
+                h.motorTable.setPower(-1);
+            }
+            else
+            {
+                h.motorTable.setPower(0);
+            }
 
 
         }

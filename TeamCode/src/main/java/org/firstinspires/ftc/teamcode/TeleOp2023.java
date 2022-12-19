@@ -114,11 +114,7 @@ public class TeleOp2023 extends LinearOpMode
 
 
             }
-            if(!gamepad2.dpad_up && h.touch.isPressed())
-            {
-                h.motorLift.setPower(0);
-            }
-            if(!gamepad2.dpad_up && !gamepad2.dpad_down)
+            if((!gamepad2.dpad_up && h.touch.isPressed()) || (!gamepad2.dpad_up && !gamepad2.dpad_down))
             {
                 h.motorLift.setPower(0);
             }
@@ -167,17 +163,33 @@ public class TeleOp2023 extends LinearOpMode
                 h.servoIntakeFar.setPower(1);
             }
             //Intake
-            if(gamepad2.b)
+            else if(gamepad2.b)
             {
                     h.servoIntakeClose.setPower(1);
                     h.servoIntakeFar.setPower(-1);
 
             }
-            if(!gamepad2.a && !gamepad2.b)
+            //Stop Intake if not in use
+            else
             {
                 h.servoIntakeClose.setPower(0);
                 h.servoIntakeFar.setPower(0);
             }
+
+            //Turn table
+            if(gamepad1.left_bumper)
+            {
+                h.motorTable.setPower(1);
+            }
+            else if(gamepad1.right_bumper)
+            {
+                h.motorTable.setPower(-1);
+            }
+            else
+            {
+                h.motorTable.setPower(0);
+            }
+
 
             pressedLastIterationOuttake = pressedOutake;
 

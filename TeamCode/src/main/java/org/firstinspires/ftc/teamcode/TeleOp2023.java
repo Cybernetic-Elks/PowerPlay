@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 public class TeleOp2023 extends LinearOpMode
 {
+
     OpMode opmode;
 
     @Override
@@ -39,51 +40,26 @@ public class TeleOp2023 extends LinearOpMode
         final int LOW_GOAL = 4400;
         final int CONE_HEIGHT = 0;
 
+        final int LEFT_TABLE_POS = 0;
+        final int RIGHT_TABLE_POS = 0;
+        final int FRONT_TABLE_POS = 0;
+        final int BACK_TABLE_POS = 0;
+
 
         waitForStart();
         while (opModeIsActive()) {
             boolean pressedOutake = gamepad2.a;
-            telemetry.addData("motorFrontLeft: ", h.motorFrontLeft.getDirection());
-            telemetry.addData("motorFrontRight: ", h.motorFrontRight.getDirection());
-            telemetry.addData("motorBackLeft: ", h.motorBackLeft.getDirection());
-            telemetry.addData("motorBackRight: ", h.motorBackRight.getDirection());
             telemetry.addData("servoIntakeClose: ", h.servoIntakeClose.getPower());
             telemetry.addData("servoIntakeFar: ", h.servoIntakeFar.getPower());
             telemetry.addData("motorLift current Pos: ", h.motorLift.getCurrentPosition());
-            telemetry.addData("touchSensor is pressed: ", h.touch.isPressed());
+            telemetry.addData("motorTable current Pos: ", h.motorTable.getCurrentPosition());
             telemetry.update();
-            h.motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-            h.motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
-            h.motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-            h.motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
             slow = gamepad1.right_trigger > 0.01;
             slow2 = gamepad2.y;
 
             /**Start drive system**/
-            if (gamepad1.dpad_left) {
-                h.motorFrontLeft.setPower(-.4);
-                h.motorFrontRight.setPower(.4);
-                h.motorBackLeft.setPower(-.4);
-                h.motorBackRight.setPower(.4);
-            } else if (gamepad1.dpad_right) {
-                h.motorFrontLeft.setPower(.4);
-                h.motorFrontRight.setPower(-.4);
-                h.motorBackLeft.setPower(.4);
-                h.motorBackRight.setPower(-.4);
-            }
-            if (gamepad1.dpad_up) {
-                h.motorFrontLeft.setPower(.4);
-                h.motorFrontRight.setPower(.4);
-                h.motorBackLeft.setPower(.4);
-                h.motorBackRight.setPower(.4);
-            } else if (gamepad1.dpad_down) {
-                h.motorFrontLeft.setPower(-.4);
-                h.motorFrontRight.setPower(-.4);
-                h.motorBackLeft.setPower(-.4);
-                h.motorBackRight.setPower(-.4);
-            }
-
             h.driveOmniDir(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, slow, 5, 2);
+
             /*h.motorLift.setPower(-gamepad1.left_trigger);
             h.motorLift.setPower(gamepad1.right_trigger);*/
 
@@ -111,8 +87,6 @@ public class TeleOp2023 extends LinearOpMode
                 {
                     h.motorLift.setPower(-1);
                 }
-
-
             }
             if((!gamepad2.dpad_up && h.touch.isPressed()) || (!gamepad2.dpad_up && !gamepad2.dpad_down))
             {
@@ -123,6 +97,7 @@ public class TeleOp2023 extends LinearOpMode
                 h.motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 h.motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
+
             /*
             if (gamepad2.dpad_up)
             {
@@ -192,6 +167,26 @@ public class TeleOp2023 extends LinearOpMode
 
 
             pressedLastIterationOuttake = pressedOutake;
+
+            /*if (gamepad1.dpad_left) //Move table to the left of the robot
+            {
+                h.motorTable.setTargetPosition(LEFT_TABLE_POS);
+                h.motorTable.setPower(1);
+            }
+            else if (gamepad1.dpad_right) //Move table to right of the robot
+            {
+                h.motorTable.setTargetPosition(RIGHT_TABLE_POS);
+                h.motorTable.setPower(1);
+            }
+            else if (gamepad1.dpad_up) //Move table to in front of the robot
+            {
+                h.motorTable.setTargetPosition(FRONT_TABLE_POS);
+                h.motorTable.setPower(1);
+            }
+            if(!h.motorTable.isBusy() && !(gamepad1.dpad_left || gamepad1.dpad_right || gamepad1.dpad_up))
+            {
+                h.motorTable.setPower(0);
+            }*/
 
         }
     }

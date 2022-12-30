@@ -115,6 +115,8 @@ public class Hardware extends LinearOpMode
         motorLift = aMap.dcMotor.get("motorLift");
         motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorLift.setDirection(DcMotorSimple.Direction.FORWARD);
 
 
 
@@ -143,6 +145,8 @@ public class Hardware extends LinearOpMode
         motorLift2 = aMap.dcMotor.get("motorLift2");
         motorLift2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorLift2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorLift2.setDirection(DcMotorSimple.Direction.REVERSE);
 
         motorTable = aMap.dcMotor.get("motorTable");
         motorTable.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

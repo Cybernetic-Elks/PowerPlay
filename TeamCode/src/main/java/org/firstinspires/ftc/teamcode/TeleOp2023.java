@@ -45,6 +45,11 @@ public class TeleOp2023 extends LinearOpMode
         final int FRONT_TABLE_POS = 0;
         final int BACK_TABLE_POS = 0;
 
+        final int FAST_LIFT_INC = 50;
+        final int SLOW_LIFT_INC = 1;
+
+        int liftHeight = 0;
+
 
         waitForStart();
         while (opModeIsActive()) {
@@ -52,6 +57,7 @@ public class TeleOp2023 extends LinearOpMode
             telemetry.addData("servoIntakeClose: ", h.servoIntakeClose.getPower());
             telemetry.addData("servoIntakeFar: ", h.servoIntakeFar.getPower());
             telemetry.addData("motorLift current Pos: ", h.motorLift.getCurrentPosition());
+            telemetry.addData("motorLift2 current Pos: ", h.motorLift2.getCurrentPosition());
             telemetry.addData("motorTable current Pos: ", h.motorTable.getCurrentPosition());
             telemetry.update();
             slow = gamepad1.right_trigger > 0.01;
@@ -68,35 +74,35 @@ public class TeleOp2023 extends LinearOpMode
             {
                 if (slow2)
                 {
-                    h.motorLift.setPower(.7);
+                    liftHeight = liftHeight + SLOW_LIFT_INC;
 
                 }
                 else
                 {
-                    h.motorLift.setPower(1);
+                    liftHeight = liftHeight + FAST_LIFT_INC;
                 }
             }
             if(gamepad2.dpad_down && !h.touch.isPressed())
             {
                 if (slow2)
                 {
-                    h.motorLift.setPower(-.6);
+                    liftHeight = liftHeight - SLOW_LIFT_INC;
 
                 }
                 else
                 {
-                    h.motorLift.setPower(-1);
+                    liftHeight = liftHeight - FAST_LIFT_INC;
                 }
             }
-            if((!gamepad2.dpad_up && h.touch.isPressed()) || (!gamepad2.dpad_up && !gamepad2.dpad_down))
-            {
-                h.motorLift.setPower(0);
-            }
-            if (h.touch.isPressed())
+
+            h.motorLift.setTargetPosition(liftHeight);
+            h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            h.motorLift.setPower(1);
+            /*if (h.touch.isPressed())
             {
                 h.motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 h.motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            }
+            }*/
 
             /*
             if (gamepad2.dpad_up)

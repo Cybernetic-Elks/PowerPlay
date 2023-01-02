@@ -3,11 +3,12 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import java.util.concurrent.TimeUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 @TeleOp(name = "Testing", group = "TeleOp")
 /**
@@ -18,6 +19,19 @@ public class TeleopTesting extends LinearOpMode
 {
     OpMode opmode;
 
+    public enum TableMovementState {
+        GOING_FRONT,
+        GOING_LEFT,
+        GOING_RIGHT,
+        GOING_BACK,
+        RESTING
+    }
+    public enum TableState {
+        FRONT,
+        LEFT,
+        RIGHT,
+        BACK
+    }
     @Override
     public void runOpMode() {
         Hardware h = new Hardware();
@@ -42,6 +56,8 @@ public class TeleopTesting extends LinearOpMode
         final int LOW_GOAL = 4400;
         final int CONE_HEIGHT = 0;
         boolean dropping = false;
+
+        double currentArmDegree;
         /*
         public enum IntakeState =
         {
@@ -57,8 +73,8 @@ public class TeleopTesting extends LinearOpMode
         while (opModeIsActive()) {
             boolean pressedOutake = gamepad2.a;
             //telemetry.addData("Intake State: ", outtakeState;
-            telemetry.addData("servoIntakeClose: ", h.servoIntakeClose.getPower());
-            telemetry.addData("servoIntakeFar: ", h.servoIntakeFar.getPower());
+            telemetry.addData("Intrinsic: ", h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+            telemetry.addData("Extrinsic: ", h.imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
             telemetry.addData("motorLift current Pos: ", h.motorLift.getCurrentPosition());
             telemetry.addData("touchSensor is pressed: ", h.touch.isPressed());
             telemetry.update();
@@ -206,8 +222,8 @@ public class TeleopTesting extends LinearOpMode
                             outtakeState = IntakeState.STOPPED;
                         }
                     break;
-                }
-             */
+                }*/
+
 
 
             //Intake
@@ -243,19 +259,10 @@ public class TeleopTesting extends LinearOpMode
 
             pressedLastIterationOuttake = pressedOutake;
 
-            //Turn table
-            if(gamepad1.left_bumper)
-            {
-                h.motorTable.setPower(1);
-            }
-            else if(gamepad1.right_bumper)
-            {
-                h.motorTable.setPower(-1);
-            }
-            else
-            {
-                h.motorTable.setPower(0);
-            }
+            //TurnTable
+            currentArmDegree = h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+
+
 
 
         }

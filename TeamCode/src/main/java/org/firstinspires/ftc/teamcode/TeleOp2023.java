@@ -1,11 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 @TeleOp(name = "2023 TeleOp - CHOOSE THIS ONE", group = "TeleOp")
 /**
@@ -28,6 +33,32 @@ public class TeleOp2023 extends LinearOpMode
             telemetry.addData("Init Error:", "Something failed to initialize");
             e.printStackTrace();
         }
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+
+        parameters.mode                = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled      = false;
+
+        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
+        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
+        // and named "imu".
+        h.imu = hardwareMap.get(BNO055IMU.class, "imu");
+        h.imu.initialize(parameters);
+
+        telemetry.addData("Mode", "calibrating...");
+        telemetry.update();
+
+        // make sure the imu gyro is calibrated before continuing.
+        while (!isStopRequested() && !h.imu.isGyroCalibrated())
+        {
+            sleep(50);
+            idle();
+        }
+
+        telemetry.addData("Mode", "waiting for start");
+        telemetry.addData("imu calib status", h.imu.getCalibrationStatus().toString());
+        telemetry.update();
         telemetry.addData("Main Initialization ", "complete");
         telemetry.update();
         boolean pressedLastIterationOuttake = false;
@@ -52,8 +83,10 @@ public class TeleOp2023 extends LinearOpMode
             telemetry.addData("servoIntakeClose: ", h.servoIntakeClose.getPower());
             telemetry.addData("servoIntakeFar: ", h.servoIntakeFar.getPower());
             telemetry.addData("motorLift current Pos: ", h.motorLift.getCurrentPosition());
-            telemetry.addData("motorLift2 current Pos: ", h.motorLift2.getCurrentPosition());
+            telemetry.addData("touchSensor is pressed: ", h.touch.isPressed());
             telemetry.addData("motorTable current Pos: ", h.motorTable.getCurrentPosition());
+            telemetry.addData("Intrinsic: ", h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+            telemetry.addData("Extrinsic: ", h.imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
             telemetry.update();
             slow = gamepad1.right_trigger > 0.01;
             slow2 = gamepad2.y;
@@ -93,12 +126,12 @@ public class TeleOp2023 extends LinearOpMode
                     h.motorLift.setPower(-1);
                 }
             }
-            
+
             if((!gamepad2.dpad_up && h.touch.isPressed()) || (!gamepad2.dpad_up && !gamepad2.dpad_down))
             {
                 h.motorLift.setTargetPosition(h.motorLift.getCurrentPosition());
                 h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                h.motorLift.setPower(1);
+                h.motorLift.setPower(.5);
             }
             /*if (h.touch.isPressed())
             {
@@ -160,13 +193,29 @@ public class TeleOp2023 extends LinearOpMode
             }
 
             //Turn table
-            if(gamepad1.left_bumper)
+            if(gamepad2.left_bumper /* && h.motorLift <= UPPER_LIMIT */)
             {
-                h.motorTable.setPower(1);
+                if (slow)
+                {
+                    h.motorTable.setPower(.7);
+
+                }
+                else
+                {
+                    h.motorTable.setPower(1);
+                }
             }
-            else if(gamepad1.right_bumper)
+            else if(gamepad2.right_bumper)
             {
-                h.motorTable.setPower(-1);
+                if (slow)
+                {
+                    h.motorTable.setPower(-.6);
+
+                }
+                else
+                {
+                    h.motorTable.setPower(-1);
+                }
             }
             else
             {
@@ -174,9 +223,11 @@ public class TeleOp2023 extends LinearOpMode
             }
 
 
+
             pressedLastIterationOuttake = pressedOutake;
 
-            /*if (gamepad1.dpad_left) //Move table to the left of the robot
+            /*
+            if (gamepad1.dpad_left) //Move table to the left of the robot
             {
                 h.motorTable.setTargetPosition(LEFT_TABLE_POS);
                 h.motorTable.setPower(1);
@@ -199,3 +250,4 @@ public class TeleOp2023 extends LinearOpMode
         }
     }
 }
+// Loren was here hi hou7 r u?///

@@ -116,7 +116,7 @@ public class Hardware extends LinearOpMode
         motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorLift.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorLift.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
 
@@ -142,11 +142,11 @@ public class Hardware extends LinearOpMode
         motorFrontLeft.setPower(0);
         motorBackLeft.setPower(0);
 
-        motorLift2 = aMap.dcMotor.get("motorLift2");
+        /*motorLift2 = aMap.dcMotor.get("motorLift2");
         motorLift2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorLift2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorLift2.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorLift2.setDirection(DcMotorSimple.Direction.REVERSE);*/
 
         motorTable = aMap.dcMotor.get("motorTable");
         motorTable.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -592,8 +592,6 @@ public class Hardware extends LinearOpMode
     public void driveFieldRelative(double joystickX, double joystickY, double turn, boolean slow, double slowFactor, double baseFactor)
     {
         Orientation currentHeading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
-
-
 
         // convert to polar
         double theta = Math.atan2(joystickX, joystickY);

@@ -57,6 +57,12 @@ public class TeleopTesting extends LinearOpMode
         final int CONE_HEIGHT = 0;
         boolean dropping = false;
 
+        final int LEFT_TABLE_POS = -1022;
+        final int RIGHT_TABLE_POS = 1026;
+        final int FRONT_TABLE_POS = 0;
+        final int BACK_TABLE_POS = 2526;
+        boolean turnTabling;
+
         double currentArmDegree;
         /*
         public enum IntakeState =
@@ -260,7 +266,31 @@ public class TeleopTesting extends LinearOpMode
             pressedLastIterationOuttake = pressedOutake;
 
             //TurnTable
-            currentArmDegree = h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+            if (gamepad1.left_bumper) //Move table to the left of the robot
+            {
+                h.motorTable.setTargetPosition(LEFT_TABLE_POS);
+                h.motorTable.setPower(1);
+            }
+            else if (gamepad1.left_trigger > 0.01) //Move table to the right of the robot
+            {
+                h.motorTable.setTargetPosition(RIGHT_TABLE_POS);
+                h.motorTable.setPower(1);
+            }
+            else if (gamepad1.right_trigger > 0.01) //Move table to in front of the robot
+            {
+                h.motorTable.setTargetPosition(FRONT_TABLE_POS);
+                h.motorTable.setPower(1);
+            }
+            else if (gamepad2.right_bumper) //Move table to the back of the robot
+            {
+                h.motorTable.setTargetPosition(BACK_TABLE_POS);
+                h.motorTable.setPower(1);
+            }
+            if(!h.motorTable.isBusy() && !(gamepad1.dpad_left || gamepad1.dpad_right || gamepad1.dpad_up || gamepad1.dpad_down))
+            {
+                h.motorTable.setPower(0);
+            }
+
 
 
 

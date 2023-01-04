@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -11,7 +12,8 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 //TODO Make it go to a high pole
-@Autonomous(name="LEFT POWERPLAY", group="Auto")
+@Disabled
+@Autonomous(name="LEFT POWERPLAY OLD", group="Auto")
 public class PowerPlayAutonomous extends LinearOpMode {
     Hardware h = new Hardware();
     OpenCvCamera webCam;
@@ -99,7 +101,7 @@ public class PowerPlayAutonomous extends LinearOpMode {
             }
             telemetry.addData("ZONE:", detector.getSide());
             //Start raising arm to low tower position
-            h.motorLift.setTargetPosition(4041);
+            h.motorLift.setTargetPosition(2000);
             h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             h.motorLift.setPower(1);
 

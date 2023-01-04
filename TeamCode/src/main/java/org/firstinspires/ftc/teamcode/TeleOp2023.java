@@ -71,10 +71,10 @@ public class TeleOp2023 extends LinearOpMode
         final int LOW_GOAL = 4400;
         final int CONE_HEIGHT = 0;
 
-        final int LEFT_TABLE_POS = 0;
-        final int RIGHT_TABLE_POS = 0;
+        final int LEFT_TABLE_POS = -1022;
+        final int RIGHT_TABLE_POS = 1026;
         final int FRONT_TABLE_POS = 0;
-        final int BACK_TABLE_POS = 0;
+        final int BACK_TABLE_POS = 2526;
 
 
         waitForStart();
@@ -193,9 +193,9 @@ public class TeleOp2023 extends LinearOpMode
             }
 
             //Turn table
-            if(gamepad2.left_bumper /* && h.motorLift <= UPPER_LIMIT */)
-            {
-                if (slow)
+            //if(gamepad2.left_bumper /* && h.motorLift <= UPPER_LIMIT */)
+            /*{
+                if (slow2)
                 {
                     h.motorTable.setPower(.7);
 
@@ -207,7 +207,7 @@ public class TeleOp2023 extends LinearOpMode
             }
             else if(gamepad2.right_bumper)
             {
-                if (slow)
+                if (slow2)
                 {
                     h.motorTable.setPower(-.6);
 
@@ -220,32 +220,52 @@ public class TeleOp2023 extends LinearOpMode
             else
             {
                 h.motorTable.setPower(0);
-            }
+            }*/
 
 
 
             pressedLastIterationOuttake = pressedOutake;
 
-            /*
-            if (gamepad1.dpad_left) //Move table to the left of the robot
+            //Turn Table Manual
+
+            if(gamepad2.right_stick_x > 0.01)
+            {
+                h.motorTable.setPower(.5);
+            }
+            else if (gamepad2.right_stick_x < -0.01)
+            {
+                h.motorTable.setPower(-.5);
+            }
+
+            //Turn Table Auto
+            if (gamepad2.left_bumper) //Move table to the left of the robot
             {
                 h.motorTable.setTargetPosition(LEFT_TABLE_POS);
+                h.motorTable.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 h.motorTable.setPower(1);
             }
-            else if (gamepad1.dpad_right) //Move table to right of the robot
+            else if (gamepad2.left_trigger > 0.01) //Move table to the right of the robot
             {
                 h.motorTable.setTargetPosition(RIGHT_TABLE_POS);
+                h.motorTable.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 h.motorTable.setPower(1);
             }
-            else if (gamepad1.dpad_up) //Move table to in front of the robot
+            else if (gamepad2.right_trigger > 0.01) //Move table to in front of the robot
             {
                 h.motorTable.setTargetPosition(FRONT_TABLE_POS);
+                h.motorTable.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 h.motorTable.setPower(1);
             }
-            if(!h.motorTable.isBusy() && !(gamepad1.dpad_left || gamepad1.dpad_right || gamepad1.dpad_up))
+            else if (gamepad2.right_bumper) //Move table to the back of the robot
+            {
+                h.motorTable.setTargetPosition(BACK_TABLE_POS);
+                h.motorTable.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                h.motorTable.setPower(1);
+            }
+            if(!h.motorTable.isBusy() && !(gamepad2.dpad_left || gamepad2.dpad_right || gamepad2.dpad_up || gamepad2.dpad_down) && !(gamepad2.right_stick_x > 0.01))
             {
                 h.motorTable.setPower(0);
-            }*/
+            }
 
         }
     }

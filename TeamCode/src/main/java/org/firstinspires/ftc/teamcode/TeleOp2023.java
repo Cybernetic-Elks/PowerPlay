@@ -92,7 +92,7 @@ public class TeleOp2023 extends LinearOpMode
             slow2 = gamepad2.y;
 
             /**Start drive system**/
-            h.driveOmniDir(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, slow, 5, 2);
+            h.driveOmniDir(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, slow, 5, 5);
 
             /*h.motorLift.setPower(-gamepad1.left_trigger);
             h.motorLift.setPower(gamepad1.right_trigger);*/
@@ -175,14 +175,14 @@ public class TeleOp2023 extends LinearOpMode
 
             //Outake
             if(gamepad2.a) {
-                h.servoIntakeClose.setPower(-1);
-                h.servoIntakeFar.setPower(1);
+                h.servoIntakeClose.setPower(1);
+                h.servoIntakeFar.setPower(-1);
             }
             //Intake
             else if(gamepad2.b)
             {
-                    h.servoIntakeClose.setPower(1);
-                    h.servoIntakeFar.setPower(-1);
+                    h.servoIntakeClose.setPower(-1);
+                    h.servoIntakeFar.setPower(1);
 
             }
             //Stop Intake if not in use
@@ -230,11 +230,13 @@ public class TeleOp2023 extends LinearOpMode
 
             if(gamepad2.right_stick_x > 0.01)
             {
-                h.motorTable.setPower(.5);
+                h.motorTable.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                h.motorTable.setPower(.4);
             }
             else if (gamepad2.right_stick_x < -0.01)
             {
-                h.motorTable.setPower(-.5);
+                h.motorTable.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                h.motorTable.setPower(-.4);
             }
 
             //Turn Table Auto
@@ -262,7 +264,7 @@ public class TeleOp2023 extends LinearOpMode
                 h.motorTable.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 h.motorTable.setPower(1);
             }
-            if(!h.motorTable.isBusy() && !(gamepad2.dpad_left || gamepad2.dpad_right || gamepad2.dpad_up || gamepad2.dpad_down) && !(gamepad2.right_stick_x > 0.01))
+            if(!h.motorTable.isBusy() && !(gamepad2.dpad_left || gamepad2.dpad_right || gamepad2.dpad_up || gamepad2.dpad_down) && !(gamepad2.right_stick_x > 0.01) && !(gamepad2.right_stick_x < -0.01))
             {
                 h.motorTable.setPower(0);
             }

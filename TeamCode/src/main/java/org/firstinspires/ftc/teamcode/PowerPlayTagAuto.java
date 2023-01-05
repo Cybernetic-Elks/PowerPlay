@@ -240,6 +240,7 @@ public class PowerPlayTagAuto extends LinearOpMode
         h.strafePureEncoder(true,h.calculateTicks(15),.5);
         h.sleep(2500);
 
+        //TODO Maybe slightly longer to better align with pole
         h.drivePureEncoder(true,h.calculateTicks(6),.2);
         h.sleep(2500);
 
@@ -282,6 +283,7 @@ public class PowerPlayTagAuto extends LinearOpMode
                 h.sleep(2500);
                 h.turnIMU(90,.5,.3);
                 h.sleep(1000);
+                //TODO Maybe go back a little to ensure I am in the zone fully
                 break;
         }
     }

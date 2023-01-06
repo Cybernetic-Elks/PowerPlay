@@ -274,16 +274,16 @@ public class PowerPlayTagAuto extends LinearOpMode
                 h.turnIMU(90,.5,.3);
                 h.sleep(1000);
                 h.drive(true,18,.5);
+                //TODO maybe strafe to the left to ensure I am in the zone?
 
                 break;
             case RIGHT:
                 h.strafePureEncoder(true, h.calculateTicks(14),.5);
                 h.sleep(2500);
-                h.drivePureEncoder(true, h.calculateTicks(44),.5);
+                h.drivePureEncoder(true, h.calculateTicks(33),.5);
                 h.sleep(2500);
                 h.turnIMU(90,.5,.3);
                 h.sleep(1000);
-                //TODO Maybe go back a little to ensure I am in the zone fully
                 break;
         }
     }

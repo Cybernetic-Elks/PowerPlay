@@ -79,46 +79,20 @@ public class TeleopTesting extends LinearOpMode
         while (opModeIsActive()) {
             boolean pressedOutake = gamepad2.a;
             //telemetry.addData("Intake State: ", outtakeState;
-            telemetry.addData("Intrinsic: ", h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
-            telemetry.addData("Extrinsic: ", h.imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+            //telemetry.addData("Intrinsic: ", h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+            //telemetry.addData("Extrinsic: ", h.imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
             telemetry.addData("motorLift current Pos: ", h.motorLift.getCurrentPosition());
             telemetry.addData("touchSensor is pressed: ", h.touch.isPressed());
             telemetry.update();
-            h.motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-            h.motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
-            h.motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-            h.motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
             slow = gamepad1.right_trigger > 0.01;
             slow2 = gamepad2.y;
 
             /**Start drive system**/
-            if (gamepad1.dpad_left) {
-                h.motorFrontLeft.setPower(-.4);
-                h.motorFrontRight.setPower(.4);
-                h.motorBackLeft.setPower(-.4);
-                h.motorBackRight.setPower(.4);
-            } else if (gamepad1.dpad_right) {
-                h.motorFrontLeft.setPower(.4);
-                h.motorFrontRight.setPower(-.4);
-                h.motorBackLeft.setPower(.4);
-                h.motorBackRight.setPower(-.4);
-            }
-            if (gamepad1.dpad_up) {
-                h.motorFrontLeft.setPower(.4);
-                h.motorFrontRight.setPower(.4);
-                h.motorBackLeft.setPower(.4);
-                h.motorBackRight.setPower(.4);
-            } else if (gamepad1.dpad_down) {
-                h.motorFrontLeft.setPower(-.4);
-                h.motorFrontRight.setPower(-.4);
-                h.motorBackLeft.setPower(-.4);
-                h.motorBackRight.setPower(-.4);
-            }
 
-            h.driveOmniDir(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, slow, 5, 2);
+            //h.driveOmniDir(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, slow, 5, 2);
             //Motor Lift Controls
-            if(gamepad2.dpad_up /* && h.motorLift <= UPPER_LIMIT */)
-            {
+            //if(gamepad2.dpad_up /* && h.motorLift <= UPPER_LIMIT */)
+            /*{
                 if (slow2)
                 {
                     h.motorLift.setPower(.7);
@@ -149,7 +123,7 @@ public class TeleopTesting extends LinearOpMode
             {
                 h.motorLift.setPower(0);
                 h.motorLift2.setPower(0);
-            }
+            }*/
 
 
             //Auto Arm
@@ -235,8 +209,8 @@ public class TeleopTesting extends LinearOpMode
             //Intake
             if(gamepad2.b)
             {
-                h.servoIntakeClose.setPower(1);
-                h.servoIntakeFar.setPower(-1);
+                h.servoIntakeClose.setPower(-1);
+                h.servoIntakeFar.setPower(1);
                 dropping = false;
             }
 
@@ -248,8 +222,8 @@ public class TeleopTesting extends LinearOpMode
             }
             if (outtake.time() < 1 && dropping)
             {
-                h.servoIntakeClose.setPower(-1);
-                h.servoIntakeFar.setPower(1);
+                h.servoIntakeClose.setPower(1);
+                h.servoIntakeFar.setPower(-1);
             }
             else
             {
@@ -266,7 +240,7 @@ public class TeleopTesting extends LinearOpMode
             pressedLastIterationOuttake = pressedOutake;
 
             //TurnTable
-            if (gamepad1.left_bumper) //Move table to the left of the robot
+            /*if (gamepad1.left_bumper) //Move table to the left of the robot
             {
                 h.motorTable.setTargetPosition(LEFT_TABLE_POS);
                 h.motorTable.setPower(1);
@@ -289,7 +263,7 @@ public class TeleopTesting extends LinearOpMode
             if(!h.motorTable.isBusy() && !(gamepad1.dpad_left || gamepad1.dpad_right || gamepad1.dpad_up || gamepad1.dpad_down))
             {
                 h.motorTable.setPower(0);
-            }
+            }*/
 
 
 

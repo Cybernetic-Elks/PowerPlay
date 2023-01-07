@@ -26,6 +26,7 @@ public class TeleOp2023 extends LinearOpMode
     public void runOpMode() {
         Hardware h = new Hardware();
         ElapsedTime runtime = new ElapsedTime();
+        ElapsedTime outtake = new ElapsedTime();
 
         try {
             h.init(hardwareMap, telemetry);
@@ -75,6 +76,8 @@ public class TeleOp2023 extends LinearOpMode
         final int RIGHT_TABLE_POS = 1026;
         final int FRONT_TABLE_POS = 0;
         final int BACK_TABLE_POS = 2526;
+
+        boolean dropping = false;
 
 
         waitForStart();
@@ -172,25 +175,38 @@ public class TeleOp2023 extends LinearOpMode
                 }
             }
             */
+            //Intake
+            if(gamepad2.b)
+            {
+                h.servoIntakeClose.setPower(-1);
+                h.servoIntakeFar.setPower(1);
+                dropping = false;
+            }
 
-            //Outake
-            if(gamepad2.a) {
+            //Outtake
+            if (pressedOutake && !pressedLastIterationOuttake)
+            {
+                dropping = true;
+                outtake.reset();
+            }
+            if (outtake.time() < 1 && dropping)
+            {
                 h.servoIntakeClose.setPower(1);
                 h.servoIntakeFar.setPower(-1);
             }
-            //Intake
-            else if(gamepad2.b)
-            {
-                    h.servoIntakeClose.setPower(-1);
-                    h.servoIntakeFar.setPower(1);
-
-            }
-            //Stop Intake if not in use
             else
+            {
+                dropping = false;
+            }
+
+            if(!gamepad2.a && !gamepad2.b && !dropping)
             {
                 h.servoIntakeClose.setPower(0);
                 h.servoIntakeFar.setPower(0);
             }
+
+
+            pressedLastIterationOuttake = pressedOutake;
 
             //Turn table
             //if(gamepad2.left_bumper /* && h.motorLift <= UPPER_LIMIT */)

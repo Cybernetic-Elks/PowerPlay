@@ -63,8 +63,11 @@ public class ZTesting_Auto extends LinearOpMode {
         h.motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         h.motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 */
-        h.drive(true, 12, 1);
-        //h.drive(true, 12, .5);
+
+        while(!isStopRequested())
+        {
+            sleep(15);
+        }
 
     }
 }

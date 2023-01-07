@@ -133,6 +133,11 @@ public class PowerPlayTagAuto extends LinearOpMode
         telemetry.addData("imu calib status", h.imu.getCalibrationStatus().toString());
         telemetry.update();
 
+        h.motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        h.motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        h.motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        h.motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
         while (!isStarted() && !isStopRequested())
         {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
@@ -234,14 +239,14 @@ public class PowerPlayTagAuto extends LinearOpMode
         h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         h.motorLift.setPower(1);
 
-        h.drivePureEncoder(true,h.calculateTicks(4),.2);
+        h.drivePureEncoder(true,h.calculateTicks(2),.2);
         h.sleep(2500);
 
         h.strafePureEncoder(true,h.calculateTicks(15),.5);
         h.sleep(2500);
 
         //TODO Maybe slightly longer to better align with pole
-        h.drivePureEncoder(true,h.calculateTicks(6),.2);
+        h.drivePureEncoder(true,h.calculateTicks(10),.2);
         h.sleep(2500);
 
         //Drop cone
@@ -257,32 +262,32 @@ public class PowerPlayTagAuto extends LinearOpMode
         switch (parkingSide)
         {
             case LEFT:
-                h.strafePureEncoder(true, h.calculateTicks(14),.5);
+                h.strafePureEncoder(true, h.calculateTicks(16),.5);
                 h.sleep(2500);
                 h.drivePureEncoder(true, h.calculateTicks(44),.4);
                 h.sleep(2500);
-                h.turnIMU(90,.5,.3);
+                h.turnIMU(90,.4,.2);
                 h.sleep(1000);
                 h.drive(true,40,.5);
                 //TODO make it drive a bit more forward maybe
                 break;
             case MIDDLE:
-                h.strafePureEncoder(true, h.calculateTicks(14),.5);
+                h.strafePureEncoder(true, h.calculateTicks(16),.5);
                 h.sleep(2500);
                 h.drivePureEncoder(true, h.calculateTicks(44),.4);
                 h.sleep(2500);
-                h.turnIMU(90,.5,.3);
+                h.turnIMU(90,.4,.2);
                 h.sleep(1000);
                 h.drive(true,18,.5);
                 //TODO maybe strafe to the left to ensure I am in the zone?
 
                 break;
             case RIGHT:
-                h.strafePureEncoder(true, h.calculateTicks(14),.5);
+                h.strafePureEncoder(true, h.calculateTicks(16),.5);
                 h.sleep(2500);
                 h.drivePureEncoder(true, h.calculateTicks(33),.5);
                 h.sleep(2500);
-                h.turnIMU(90,.5,.3);
+                h.turnIMU(90,.4,.2);
                 h.sleep(1000);
                 break;
         }

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
@@ -28,7 +29,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
-
+@Config
 public class Hardware extends LinearOpMode
 {
     /**
@@ -70,6 +71,10 @@ public class Hardware extends LinearOpMode
     private double integratedHeading = 0;
 
     DcMotor.RunMode initialMode = null;
+
+    public static double Kp = .1;
+    public static double Kd = 0;
+    public static double Ki = 0;
 
     int driveTime;
 

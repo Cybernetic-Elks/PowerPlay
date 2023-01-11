@@ -1,5 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.Hardware.Kd;
+import static org.firstinspires.ftc.teamcode.Hardware.Ki;
+import static org.firstinspires.ftc.teamcode.Hardware.Kp;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -11,13 +18,18 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
+@Config
 @Autonomous(name="ZTesting Auto", group="Auto")
 public class ZTesting_Auto extends LinearOpMode {
     Hardware h = new Hardware();
+    public static PIDController pidController = new PIDController(Kp,Ki,Kd);
+    FtcDashboard dashboard;
+
+    public static double targetPos = 1200;
+
     //PIDController pid = new PIDController();
     OpenCvCamera webCam;
     @Override
-
     public void runOpMode() throws InterruptedException {
         try {
             h.init(hardwareMap, telemetry);
@@ -42,12 +54,21 @@ public class ZTesting_Auto extends LinearOpMode {
         telemetry.update();
         int distanceEncodeVal = 385;
 
+        dashboard = FtcDashboard.getInstance();
+
+        TelemetryPacket packet = new TelemetryPacket();
+
+        dashboard.setTelemetryTransmissionInterval(25);
+
+
         // make sure the imu gyro is calibrated before continuing.
         while (!isStopRequested() && !h.imu.isGyroCalibrated())
         {
             sleep(50);
             idle();
         }
+
+
 
         telemetry.addData("Mode", "waiting for start");
         telemetry.addData("imu calib status", h.imu.getCalibrationStatus().toString());
@@ -56,6 +77,16 @@ public class ZTesting_Auto extends LinearOpMode {
         h.motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
         h.motorFrontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         h.motorBackLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        h.motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        h.motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        h.motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        h.motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        h.motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        h.motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        h.motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        h.motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         waitForStart();
 
         /*h.motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -64,9 +95,39 @@ public class ZTesting_Auto extends LinearOpMode {
         h.motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 */
 
+        while(!isStopRequested() && Math.abs(targetPos - h.motorFrontLeft.getCurrentPosition()) >= 10)
+        {
+            telemetry.addData("Targetpos: ", targetPos);
+            telemetry.addData("MotorFrontLeft: ", h.motorFrontLeft.getCurrentPosition());
+            telemetry.addData("MotorFrontRight: ", h.motorFrontRight.getCurrentPosition());
+            telemetry.addData("MotorBackLeft: ", h.motorBackLeft.getCurrentPosition());
+            telemetry.addData("MotorBackRight: ", h.motorBackRight.getCurrentPosition());
+            telemetry.addData("Running...", "");
+            packet.put("error", targetPos - h.motorFrontLeft.getCurrentPosition());
+            telemetry.update();
+
+            h.motorFrontLeft.setPower(pidController.output(targetPos,h.motorFrontLeft.getCurrentPosition()));
+            h.motorFrontRight.setPower(pidController.output(targetPos,h.motorFrontRight.getCurrentPosition()));
+            h.motorBackLeft.setPower(pidController.output(targetPos,h.motorBackLeft.getCurrentPosition()));
+            h.motorBackRight.setPower(pidController.output(targetPos,h.motorBackRight.getCurrentPosition()));
+        }
+
         while(!isStopRequested())
         {
-            sleep(15);
+            telemetry.addData("Targetpos: ", targetPos);
+            telemetry.addData("MotorFrontLeft: ", h.motorFrontLeft.getCurrentPosition());
+            telemetry.addData("MotorFrontRight: ", h.motorFrontRight.getCurrentPosition());
+            telemetry.addData("MotorBackLeft: ", h.motorBackLeft.getCurrentPosition());
+            telemetry.addData("MotorBackRight: ", h.motorBackRight.getCurrentPosition());
+            telemetry.addData("Finished", "");
+            telemetry.update();
+
+            h.motorFrontLeft.setPower(0);
+            h.motorFrontRight.setPower(0);
+            h.motorBackLeft.setPower(0);
+            h.motorBackRight.setPower(0);
+
+            h.sleep(1500);
         }
 
     }

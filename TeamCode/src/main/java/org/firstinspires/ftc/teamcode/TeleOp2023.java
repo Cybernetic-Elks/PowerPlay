@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 @TeleOp(name = "2023 TeleOp - CHOOSE THIS ONE", group = "TeleOp")
 /**
  * Date Created:  7/30/2022
- * Purpose: This is going to be our main teleop for PowerPlay, but for now is just to test on the new base when it is finished.
+ * Purpose: This is going to be our main teleop for PowerPlay
  */
 public class TeleOp2023 extends LinearOpMode
 {

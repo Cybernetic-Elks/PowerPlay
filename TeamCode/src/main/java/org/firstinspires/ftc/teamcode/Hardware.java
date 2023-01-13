@@ -72,7 +72,7 @@ public class Hardware extends LinearOpMode
 
     DcMotor.RunMode initialMode = null;
 
-    public static double Kp = .1;
+    public static double Kp = .01;
     public static double Kd = 0;
     public static double Ki = 0;
 
@@ -1042,6 +1042,76 @@ public class Hardware extends LinearOpMode
         motorBackLeft.setPower(motorPower);
         motorFrontRight.setPower(motorPower);
         motorBackRight.setPower(motorPower);
+    }
+
+    public void  driveDecay(boolean forward, int distanceEncodeVal, double power)
+    {
+
+        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        driveTime = distanceEncodeVal;
+
+
+        if(forward)
+        {
+            motorFrontLeft.setTargetPosition(distanceEncodeVal);
+            motorFrontRight.setTargetPosition(distanceEncodeVal);
+            motorBackLeft.setTargetPosition(distanceEncodeVal);
+            motorBackRight.setTargetPosition(distanceEncodeVal);
+        }
+        else
+        {
+            motorFrontLeft.setTargetPosition(-distanceEncodeVal);
+            motorFrontRight.setTargetPosition(-distanceEncodeVal);
+            motorBackLeft.setTargetPosition(-distanceEncodeVal);
+            motorBackRight.setTargetPosition(-distanceEncodeVal);
+        }
+
+        motorFrontLeft.setPower(power);
+        motorFrontRight.setPower(power);
+        motorBackLeft.setPower(power);
+        motorBackRight.setPower(power);
+
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        if(forward)
+        {
+            while (motorFrontRight.getCurrentPosition() < distanceEncodeVal - 20 && !isStopRequested())
+            {
+
+            }
+        }
+        else
+        {
+
+            while (motorFrontRight.getCurrentPosition() > -distanceEncodeVal + 20 && !isStopRequested())
+            {
+
+            }
+
+        }
+
+        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        motorFrontLeft.setPower(0);
+        motorFrontRight.setPower(0);
+        motorBackLeft.setPower(0);
+        motorBackRight.setPower(0);
+
+    }
+    private double calcDecayPower(int currentPos, int targetPos)
+    {
+        double decay = -1/(Math.pow(targetPos,2));
+        return (decay * Math.pow(targetPos,2) + 1)s ;
     }
 
     public void driveStraight(double power, double time)

@@ -11,13 +11,15 @@ public class PIDController {
     double integralSum = 0;
     double lastError = 0;
     boolean angleWrap = false;
+    double integralSumLimit = 0;
 
     ElapsedTime timer = new ElapsedTime();
 
-    public PIDController(double Kp, double Ki, double Kd) {
+    public PIDController(double Kp, double Ki, double Kd, double integralSumLimit) {
         this.Kp = Kp;
         this.Ki = Ki;
         this.Kd = Kd;
+        this.integralSumLimit = integralSumLimit;
     }
     public PIDController(double Kp, double Ki, double Kd, boolean angleWrap) {
         this.Kp = Kp;
@@ -45,6 +47,15 @@ public class PIDController {
 
         derivative = (error - lastError) / timer.seconds();
         integralSum += error * timer.seconds();
+
+        if (integralSum > integralSumLimit)
+        {
+            integralSum = integralSumLimit;
+        }
+        if (integralSum < -integralSumLimit)
+        {
+            integralSum = -integralSumLimit;
+        }
 
         double out = (Kp * error) + (Ki * integralSum) + (Kd * derivative);
 

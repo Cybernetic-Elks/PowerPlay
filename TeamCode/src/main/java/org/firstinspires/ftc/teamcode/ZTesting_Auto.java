@@ -22,10 +22,11 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 @Autonomous(name="ZTesting Auto", group="Auto")
 public class ZTesting_Auto extends LinearOpMode {
     Hardware h = new Hardware();
-    public static PIDController pidController = new PIDController(Kp,Ki,Kd);
+    public static PIDController pidController = new PIDController(Kp,Ki,Kd,.25);
     FtcDashboard dashboard;
 
-    public static double targetPos = 1200;
+    public static double targetPos = 6000;
+    double output = 0;
 
     //PIDController pid = new PIDController();
     OpenCvCamera webCam;
@@ -93,7 +94,13 @@ public class ZTesting_Auto extends LinearOpMode {
         h.motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         h.motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         h.motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-*/
+*/      while (!isStopRequested())
+        {
+            if(gamepad1.a)
+            {
+                break;
+            }
+        }
 
         while(!isStopRequested() && Math.abs(targetPos - h.motorFrontLeft.getCurrentPosition()) >= 10)
         {
@@ -104,12 +111,15 @@ public class ZTesting_Auto extends LinearOpMode {
             telemetry.addData("MotorBackRight: ", h.motorBackRight.getCurrentPosition());
             telemetry.addData("Running...", "");
             packet.put("error", targetPos - h.motorFrontLeft.getCurrentPosition());
+            packet.put("targetPos:  ", targetPos);
+            packet.put("currentPos: ", h.motorFrontLeft.getCurrentPosition());
             telemetry.update();
 
-            h.motorFrontLeft.setPower(pidController.output(targetPos,h.motorFrontLeft.getCurrentPosition()));
-            h.motorFrontRight.setPower(pidController.output(targetPos,h.motorFrontRight.getCurrentPosition()));
-            h.motorBackLeft.setPower(pidController.output(targetPos,h.motorBackLeft.getCurrentPosition()));
-            h.motorBackRight.setPower(pidController.output(targetPos,h.motorBackRight.getCurrentPosition()));
+            output = pidController.output(targetPos,h.motorFrontLeft.getCurrentPosition());
+            h.motorFrontLeft.setPower(output);
+            h.motorFrontRight.setPower(output);
+            h.motorBackLeft.setPower(output);
+            h.motorBackRight.setPower(output);
         }
 
         while(!isStopRequested())

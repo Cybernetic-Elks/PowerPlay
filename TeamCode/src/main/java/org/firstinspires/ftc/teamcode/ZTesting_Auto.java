@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -115,11 +116,11 @@ public class ZTesting_Auto extends LinearOpMode {
             packet.put("currentPos: ", h.motorFrontLeft.getCurrentPosition());
             telemetry.update();
 
-            output = pidController.output(targetPos,h.motorFrontLeft.getCurrentPosition());
-            h.motorFrontLeft.setPower(output);
-            h.motorFrontRight.setPower(output);
-            h.motorBackLeft.setPower(output);
-            h.motorBackRight.setPower(output);
+            output = Range.clip(pidController.output(targetPos,h.motorFrontLeft.getCurrentPosition()),-1,1);
+            h.motorFrontLeft.setPower(Range.clip(pidController.output(targetPos,h.motorFrontLeft.getCurrentPosition()), -1,1));
+            h.motorFrontRight.setPower(Range.clip(pidController.output(targetPos,h.motorFrontRight.getCurrentPosition()), -1,1));
+            h.motorBackLeft.setPower(Range.clip(pidController.output(targetPos,h.motorBackLeft.getCurrentPosition()), -1,1));
+            h.motorBackRight.setPower(Range.clip(pidController.output(targetPos,h.motorBackRight.getCurrentPosition()),-1,1));
         }
 
         while(!isStopRequested())

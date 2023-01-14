@@ -72,7 +72,7 @@ public class Hardware extends LinearOpMode
 
     DcMotor.RunMode initialMode = null;
 
-    public static double Kp = .01;
+    public static double Kp = .003;
     public static double Kd = 0;
     public static double Ki = 0;
 
@@ -1111,7 +1111,7 @@ public class Hardware extends LinearOpMode
     private double calcDecayPower(int currentPos, int targetPos)
     {
         double decay = -1/(Math.pow(targetPos,2));
-        return (decay * Math.pow(targetPos,2) + 1)s ;
+        return (decay * Math.pow(targetPos,2) + 1);
     }
 
     public void driveStraight(double power, double time)

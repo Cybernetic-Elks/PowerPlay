@@ -17,8 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
  * Date Created:  7/30/2022
  * Purpose: This is going to be our main teleop for PowerPlay
  */
-public class TeleOp2023 extends LinearOpMode
-{
+public class TeleOp2023 extends LinearOpMode {
 
     OpMode opmode;
 
@@ -36,10 +35,10 @@ public class TeleOp2023 extends LinearOpMode
         }
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
-        parameters.mode                = BNO055IMU.SensorMode.IMU;
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.loggingEnabled      = false;
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled = false;
 
         // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
         // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
@@ -51,8 +50,7 @@ public class TeleOp2023 extends LinearOpMode
         telemetry.update();
 
         // make sure the imu gyro is calibrated before continuing.
-        while (!isStopRequested() && !h.imu.isGyroCalibrated())
-        {
+        while (!isStopRequested() && !h.imu.isGyroCalibrated()) {
             sleep(50);
             idle();
         }
@@ -101,37 +99,28 @@ public class TeleOp2023 extends LinearOpMode
             h.motorLift.setPower(gamepad1.right_trigger);*/
 
             //Motor Lift Controls
-            if(gamepad2.dpad_up /* && h.motorLift <= UPPER_LIMIT */)
-            {
-                if (slow2)
-                {
+            if (gamepad2.dpad_up /* && h.motorLift <= UPPER_LIMIT */) {
+                if (slow2) {
                     h.motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     h.motorLift.setPower(.7);
 
-                }
-                else
-                {
+                } else {
                     h.motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     h.motorLift.setPower(1);
                 }
             }
-            if(gamepad2.dpad_down && !h.touch.isPressed())
-            {
-                if (slow2)
-                {
+            if (gamepad2.dpad_down && !h.touch.isPressed()) {
+                if (slow2) {
                     h.motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     h.motorLift.setPower(-.6);
 
-                }
-                else
-                {
+                } else {
                     h.motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     h.motorLift.setPower(-1);
                 }
             }
 
-            if((!gamepad2.dpad_up && h.touch.isPressed()) || (!gamepad2.dpad_up && !gamepad2.dpad_down))
-            {
+            if ((!gamepad2.dpad_up && h.touch.isPressed()) || (!gamepad2.dpad_up && !gamepad2.dpad_down)) {
                 h.motorLift.setTargetPosition(h.motorLift.getCurrentPosition());
                 h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 h.motorLift.setPower(.5);
@@ -176,31 +165,25 @@ public class TeleOp2023 extends LinearOpMode
             }
             */
             //Intake
-            if(gamepad2.b)
-            {
+            if (gamepad2.b) {
                 h.servoIntakeClose.setPower(-1);
                 h.servoIntakeFar.setPower(1);
                 dropping = false;
             }
 
             //Outtake
-            if (pressedOutake && !pressedLastIterationOuttake)
-            {
+            if (pressedOutake && !pressedLastIterationOuttake) {
                 dropping = true;
                 outtake.reset();
             }
-            if (outtake.time() < 1 && dropping)
-            {
+            if (outtake.time() < 1 && dropping) {
                 h.servoIntakeClose.setPower(1);
                 h.servoIntakeFar.setPower(-1);
-            }
-            else
-            {
+            } else {
                 dropping = false;
             }
 
-            if(!gamepad2.a && !gamepad2.b && !dropping)
-            {
+            if (!gamepad2.a && !gamepad2.b && !dropping) {
                 h.servoIntakeClose.setPower(0);
                 h.servoIntakeFar.setPower(0);
             }
@@ -239,18 +222,14 @@ public class TeleOp2023 extends LinearOpMode
             }*/
 
 
-
             pressedLastIterationOuttake = pressedOutake;
 
             //Turn Table Manual
 
-            if(gamepad2.right_stick_x > 0.01)
-            {
+            if (gamepad2.right_stick_x > 0.01) {
                 h.motorTable.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 h.motorTable.setPower(.4);
-            }
-            else if (gamepad2.right_stick_x < -0.01)
-            {
+            } else if (gamepad2.right_stick_x < -0.01) {
                 h.motorTable.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 h.motorTable.setPower(-.4);
             }
@@ -261,30 +240,38 @@ public class TeleOp2023 extends LinearOpMode
                 h.motorTable.setTargetPosition(LEFT_TABLE_POS);
                 h.motorTable.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 h.motorTable.setPower(1);
-            }
-            else if (gamepad2.left_trigger > 0.01) //Move table to the right of the robot
+            } else if (gamepad2.left_trigger > 0.01) //Move table to the right of the robot
             {
                 h.motorTable.setTargetPosition(RIGHT_TABLE_POS);
                 h.motorTable.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 h.motorTable.setPower(1);
-            }
-            else if (gamepad2.right_trigger > 0.01) //Move table to in front of the robot
+            } else if (gamepad2.right_trigger > 0.01) //Move table to in front of the robot
             {
                 h.motorTable.setTargetPosition(FRONT_TABLE_POS);
                 h.motorTable.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 h.motorTable.setPower(1);
-            }
-            else if (gamepad2.right_bumper) //Move table to the back of the robot
+            } else if (gamepad2.right_bumper) //Move table to the back of the robot
             {
                 h.motorTable.setTargetPosition(BACK_TABLE_POS);
                 h.motorTable.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 h.motorTable.setPower(1);
             }
-            if(!h.motorTable.isBusy() && !(gamepad2.dpad_left || gamepad2.dpad_right || gamepad2.dpad_up || gamepad2.dpad_down) && !(gamepad2.right_stick_x > 0.01) && !(gamepad2.right_stick_x < -0.01))
-            {
+            if (!h.motorTable.isBusy() && !(gamepad2.dpad_left || gamepad2.dpad_right || gamepad2.dpad_up || gamepad2.dpad_down) && !(gamepad2.right_stick_x > 0.01) && !(gamepad2.right_stick_x < -0.01)) {
                 h.motorTable.setPower(0);
             }
 
+            if (gamepad2.dpad_left)
+            {
+                h.servoExtension.setPower(1);
+            }
+            if (gamepad2.dpad_right)
+            {
+               // h.servoExtension.setPower(-1);
+            }
+            if(!gamepad2.dpad_left && !gamepad2.dpad_right)
+            {
+                h.servoExtension.setPower(0);
+            }
         }
     }
 }

@@ -53,9 +53,11 @@ public class Hardware extends LinearOpMode
     Servo servoIntake;
     Servo servoWrist;
 
+
     //CRServo servoWrist;
     CRServo servoIntakeClose; //In use
     CRServo servoIntakeFar; //In use
+    CRServo servoExtension;
 
     //ColorSensor colorSensor;
     //DistanceSensor distanceSensor;
@@ -116,6 +118,7 @@ public class Hardware extends LinearOpMode
 
         servoIntakeClose = aMap.crservo.get("servoIntakeClose");
         servoIntakeFar = aMap.crservo.get("servoIntakeFar");
+        servoExtension = aMap.crservo.get("servoExtension");
 
         motorLift = aMap.dcMotor.get("motorLift");
         motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

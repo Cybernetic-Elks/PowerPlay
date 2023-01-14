@@ -70,6 +70,8 @@ public class ConceptScanServo extends LinearOpMode {
         // Change the text in quotes to match any servo name on your robot.
         servo = hardwareMap.get(Servo.class, "left_hand");
 
+//hello how r u doing? just a nice sentence to cheer you up after a long day of progamming, even tho u dont get bored you seaid.
+
         // Wait for the start button
         telemetry.addData(">", "Press Start to scan Servo." );
         telemetry.update();

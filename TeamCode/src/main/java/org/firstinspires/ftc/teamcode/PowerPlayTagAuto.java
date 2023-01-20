@@ -26,6 +26,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.apriltag.AprilTagDetection;
@@ -39,6 +40,8 @@ import java.util.ArrayList;
 public class PowerPlayTagAuto extends LinearOpMode
 {
     Hardware h = new Hardware();
+    ElapsedTime extension = new ElapsedTime();
+
     public enum Side
     {
         LEFT,
@@ -235,34 +238,31 @@ public class PowerPlayTagAuto extends LinearOpMode
         telemetry.update();
 
         //Start raising arm to low tower position
-        h.motorLift.setTargetPosition(2000);
+        h.motorLift.setTargetPosition(1300);
         h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         h.motorLift.setPower(1);
 
-        h.drivePureEncoder(true,h.calculateTicks(2),.2);
-        h.sleep(2500);
+        h.drivePureEncoder(true,h.calculateTicks(60),.65);
 
-        h.strafePureEncoder(true,h.calculateTicks(16),.5);
-        h.sleep(2300);
+        h.sleep(500);
 
-        //TODO Maybe slightly longer to better align with pole
-        h.drivePureEncoder(true,h.calculateTicks(7),.2);
-        h.sleep(2200);
+        h.drivePureEncoder(false, h.calculateTicks(14),.4);
 
-        h.drivePureEncoder(false,h.calculateTicks(2),.2);
-        h.sleep(1000);
+        h.sleep(500);
+        //TODO may be over correcting, reduce correction power to 0
+        h.turnIMU(-90, .35,.3);
 
-        //Drop cone
-        h.servoIntakeClose.setPower(1);
-        h.servoIntakeFar.setPower(-1);
-        h.sleep(1700);
-        h.servoIntakeClose.setPower(0);
-        h.servoIntakeFar.setPower(0);
+        h.drivePureEncoder(true, h.calculateTicks(7), .4);
 
-        h.drivePureEncoder(false, h.calculateTicks(5),.6);
-        h.sleep(2500);
+        h.servoExtension.setPower(1);
+        extension.reset();
+        while(extension.time() < 5) {
+
+        }
+        h.servoExtension.setPower(0);
+
         //Park in correct zone
-        switch (parkingSide)
+        /*switch (parkingSide)
         {
             case LEFT:
 
@@ -292,7 +292,7 @@ public class PowerPlayTagAuto extends LinearOpMode
                 h.turnIMU(90,.4,.2);
                 h.sleep(1000);
                 break;
-        }
+        }*/
     }
 
     void tagToTelemetry(AprilTagDetection detection)

@@ -15,6 +15,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -61,6 +64,7 @@ public class ZTesting_Auto extends LinearOpMode {
         TelemetryPacket packet = new TelemetryPacket();
 
         dashboard.setTelemetryTransmissionInterval(25);
+
 
 
         // make sure the imu gyro is calibrated before continuing.
@@ -133,12 +137,22 @@ public class ZTesting_Auto extends LinearOpMode {
             telemetry.addData("Finished", "");
             telemetry.update();
 
-            h.motorFrontLeft.setPower(0);
-            h.motorFrontRight.setPower(0);
-            h.motorBackLeft.setPower(0);
-            h.motorBackRight.setPower(0);
+            /*double angle = h.imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
 
-            h.sleep(1500);
+            h.motorFrontLeft.setPower(1);
+            h.motorFrontRight.setPower(1);
+            h.motorBackLeft.setPower(-1);
+            h.motorBackRight.setPower(-1);
+
+            if(Math.abs(90 - angle) >= 10)
+            {
+                h.motorFrontLeft.setPower(0);
+                h.motorFrontRight.setPower(0);
+                h.motorBackLeft.setPower(0);
+                h.motorBackRight.setPower(0);
+                angle = h.imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
+            }*/
+
         }
 
     }

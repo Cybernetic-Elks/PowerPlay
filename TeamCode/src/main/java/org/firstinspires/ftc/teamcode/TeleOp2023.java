@@ -24,7 +24,6 @@ public class TeleOp2023 extends LinearOpMode {
     @Override
     public void runOpMode() {
         Hardware h = new Hardware();
-        ElapsedTime runtime = new ElapsedTime();
         ElapsedTime outtake = new ElapsedTime();
 
         try {
@@ -76,6 +75,8 @@ public class TeleOp2023 extends LinearOpMode {
         final int BACK_TABLE_POS = 2526;
 
         boolean dropping = false;
+
+        double servoPos = 0;
 
 
         waitForStart();
@@ -256,7 +257,8 @@ public class TeleOp2023 extends LinearOpMode {
                 h.motorTable.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 h.motorTable.setPower(1);
             }
-            if (!h.motorTable.isBusy() && !(gamepad2.dpad_left || gamepad2.dpad_right || gamepad2.dpad_up || gamepad2.dpad_down) && !(gamepad2.right_stick_x > 0.01) && !(gamepad2.right_stick_x < -0.01)) {
+            if (!h.motorTable.isBusy() && !(gamepad2.dpad_left || gamepad2.dpad_right || gamepad2.dpad_up || gamepad2.dpad_down) && !(gamepad2.right_stick_x > 0.01) && !(gamepad2.right_stick_x < -0.01))
+            {
                 h.motorTable.setPower(0);
             }
 
@@ -266,12 +268,13 @@ public class TeleOp2023 extends LinearOpMode {
             }
             if (gamepad2.dpad_right)
             {
-               // h.servoExtension.setPower(-1);
+                h.servoExtension.setPower(-1);
             }
             if(!gamepad2.dpad_left && !gamepad2.dpad_right)
             {
                 h.servoExtension.setPower(0);
             }
+
         }
     }
 }

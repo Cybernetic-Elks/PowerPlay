@@ -25,11 +25,11 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 @Config
 @Autonomous(name="ZTesting Auto", group="Auto")
 public class ZTesting_Auto extends LinearOpMode {
-    Hardware h = new Hardware();
-    public static PIDController pidController = new PIDController(Kp,Ki,Kd,.25);
+    static Hardware h = new Hardware();
+    public static PIDController pidController = new PIDController(h.Kp,h.Ki,h.Kd,.25);
     FtcDashboard dashboard;
 
-    public static double targetPos = 518;
+    public static double targetPos = 1000;
     double output = 0;
 
     //PIDController pid = new PIDController();
@@ -107,26 +107,28 @@ public class ZTesting_Auto extends LinearOpMode {
                 break;
             }
         }
-        while(!isStopRequested() && Math.abs(targetPos - h.motorFrontLeft.getCurrentPosition()) >= 10)
-        {
-            telemetry.addData("Targetpos: ", targetPos);
-            telemetry.addData("MotorFrontLeft: ", h.motorFrontLeft.getCurrentPosition());
-            telemetry.addData("MotorFrontRight: ", h.motorFrontRight.getCurrentPosition());
-            telemetry.addData("MotorBackLeft: ", h.motorBackLeft.getCurrentPosition());
-            telemetry.addData("MotorBackRight: ", h.motorBackRight.getCurrentPosition());
-            telemetry.addData("Running...", "");
-            packet.put("error", targetPos - h.motorFrontLeft.getCurrentPosition());
-            packet.put("targetPos:  ", targetPos);
-            packet.put("currentPos: ", h.motorFrontLeft.getCurrentPosition());
-            telemetry.update();
+        while(!isStopRequested()) {
+            while (!isStopRequested() && Math.abs(targetPos - h.motorFrontLeft.getCurrentPosition()) >= 10) {
+                telemetry.addData("Targetpos: ", targetPos);
+                telemetry.addData("MotorFrontLeft: ", h.motorFrontLeft.getCurrentPosition());
+                telemetry.addData("MotorFrontRight: ", h.motorFrontRight.getCurrentPosition());
+                telemetry.addData("MotorBackLeft: ", h.motorBackLeft.getCurrentPosition());
+                telemetry.addData("MotorBackRight: ", h.motorBackRight.getCurrentPosition());
+                telemetry.addData("Running...", "");
+                telemetry.addData("Output", output);
+                packet.put("error", targetPos - h.motorFrontLeft.getCurrentPosition());
+                packet.put("targetPos:  ", targetPos);
+                packet.put("currentPos: ", h.motorFrontLeft.getCurrentPosition());
+                telemetry.update();
 
-            output = Range.clip(pidController.output(targetPos,h.motorFrontLeft.getCurrentPosition()),-1,1);
-            h.motorFrontLeft.setPower(Range.clip(pidController.output(targetPos,h.motorFrontLeft.getCurrentPosition()), -1,1));
-            h.motorFrontRight.setPower(Range.clip(pidController.output(targetPos,h.motorFrontRight.getCurrentPosition()), -1,1));
-            h.motorBackLeft.setPower(Range.clip(pidController.output(targetPos,h.motorBackLeft.getCurrentPosition()), -1,1));
-            h.motorBackRight.setPower(Range.clip(pidController.output(targetPos,h.motorBackRight.getCurrentPosition()),-1,1));
+                output = Range.clip(pidController.output(targetPos, h.motorFrontLeft.getCurrentPosition()), -1, 1);
+                h.motorFrontLeft.setPower(Range.clip(pidController.output(targetPos, h.motorFrontLeft.getCurrentPosition()), -1, 1));
+                h.motorFrontRight.setPower(Range.clip(pidController.output(targetPos, h.motorFrontRight.getCurrentPosition()), -1, 1));
+                h.motorBackLeft.setPower(Range.clip(pidController.output(targetPos, h.motorBackLeft.getCurrentPosition()), -1, 1));
+                h.motorBackRight.setPower(Range.clip(pidController.output(targetPos, h.motorBackRight.getCurrentPosition()), -1, 1));
+            }
+            targetPos = -targetPos;
         }
-
         while(!isStopRequested())
         {
             telemetry.addData("Targetpos: ", targetPos);

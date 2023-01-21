@@ -74,7 +74,7 @@ public class Hardware extends LinearOpMode
 
     DcMotor.RunMode initialMode = null;
 
-    public static double Kp = .003;
+    public static double Kp = 0.03;
     public static double Kd = 0;
     public static double Ki = 0;
 

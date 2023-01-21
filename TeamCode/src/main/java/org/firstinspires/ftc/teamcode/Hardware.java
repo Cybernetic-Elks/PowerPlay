@@ -167,6 +167,7 @@ public class Hardware extends LinearOpMode
         motorTable = aMap.dcMotor.get("motorTable");
         motorTable.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorTable.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorTable.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     /**

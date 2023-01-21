@@ -29,7 +29,7 @@ public class ZTesting_Auto extends LinearOpMode {
     public static PIDController pidController = new PIDController(Kp,Ki,Kd,.25);
     FtcDashboard dashboard;
 
-    public static double targetPos = 6000;
+    public static double targetPos = 518;
     double output = 0;
 
     //PIDController pid = new PIDController();
@@ -57,9 +57,10 @@ public class ZTesting_Auto extends LinearOpMode {
         h.imu.initialize(parameters);
         telemetry.addData("Mode", "calibrating...");
         telemetry.update();
-        int distanceEncodeVal = 385;
+
 
         dashboard = FtcDashboard.getInstance();
+        telemetry = dashboard.getTelemetry();
 
         TelemetryPacket packet = new TelemetryPacket();
 
@@ -106,7 +107,6 @@ public class ZTesting_Auto extends LinearOpMode {
                 break;
             }
         }
-
         while(!isStopRequested() && Math.abs(targetPos - h.motorFrontLeft.getCurrentPosition()) >= 10)
         {
             telemetry.addData("Targetpos: ", targetPos);
@@ -136,22 +136,6 @@ public class ZTesting_Auto extends LinearOpMode {
             telemetry.addData("MotorBackRight: ", h.motorBackRight.getCurrentPosition());
             telemetry.addData("Finished", "");
             telemetry.update();
-
-            /*double angle = h.imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
-
-            h.motorFrontLeft.setPower(1);
-            h.motorFrontRight.setPower(1);
-            h.motorBackLeft.setPower(-1);
-            h.motorBackRight.setPower(-1);
-
-            if(Math.abs(90 - angle) >= 10)
-            {
-                h.motorFrontLeft.setPower(0);
-                h.motorFrontRight.setPower(0);
-                h.motorBackLeft.setPower(0);
-                h.motorBackRight.setPower(0);
-                angle = h.imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES).thirdAngle;
-            }*/
 
         }
 

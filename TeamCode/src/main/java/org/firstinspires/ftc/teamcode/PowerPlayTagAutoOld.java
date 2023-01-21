@@ -265,7 +265,6 @@ public class PowerPlayTagAutoOld extends LinearOpMode
         switch (parkingSide)
         {
             case LEFT:
-
                 h.strafePureEncoder(true, h.calculateTicks(16),.5);
                 h.sleep(2500);
                 h.drivePureEncoder(true, h.calculateTicks(46),.4);

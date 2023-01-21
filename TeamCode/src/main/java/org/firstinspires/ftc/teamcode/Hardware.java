@@ -95,7 +95,8 @@ public class Hardware extends LinearOpMode
     final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP (2 rotations at input = 1 at output)
     final double     WHEEL_DIAMETER_INCHES   = 96 / 25.4;     // For figuring circumference (96mm / 25.4 = ~3.78)
     final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);
-    //                                                             384.5                       /     11.8378
+    //                                                             384.5                       /     11.8677        ~=      32.3988
+    //
 
     private Telemetry telemetry;
 

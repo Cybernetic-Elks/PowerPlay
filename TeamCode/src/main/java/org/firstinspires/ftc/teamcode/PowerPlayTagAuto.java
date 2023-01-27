@@ -266,13 +266,15 @@ public class PowerPlayTagAuto extends LinearOpMode
 
         h.motorTable.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         h.motorTable.setPower(-.25);
+        //TODO 2~ degrees off
         while(Math.abs(60 - h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle) >= 3 ) {
           telemetry.addLine("Turning");
           telemetry.addData("Current Angle", h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
           telemetry.update();
         }
         h.motorTable.setPower(0);
-        
+
+        //TODO move before turning
         h.drivePureEncoder(true, h.calculateTicks(7), .4);
 
         h.servoExtension.setPower(1);
@@ -286,6 +288,8 @@ public class PowerPlayTagAuto extends LinearOpMode
         while(elapsedTime.time() < 5) {
 
         }
+
+        //ToDO didn't outtake
         h.servoIntakeClose.setPower(1);
         h.servoIntakeFar.setPower(-1);
 

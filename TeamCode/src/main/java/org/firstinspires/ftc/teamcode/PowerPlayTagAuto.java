@@ -218,21 +218,28 @@ public class PowerPlayTagAuto extends LinearOpMode
             telemetry.update();
         }
 
-        /* Actually do something useful */
-        switch (tagOfInterest.id)
+        if(tagOfInterest == null)
         {
-            case LEFT: //LEFT tag is showing so I should park on the left.
-                parkingSide = Side.LEFT;
-                break;
-            case MIDDLE: //MIDDLE tag is showing so I should park on the left.
-                parkingSide = Side.MIDDLE;
-                break;
-            case RIGHT: //RIGHT tag is showing so I should park on the left.
-                parkingSide = Side.RIGHT;
-                break;
-            default: //tagOfInterest wasn't found so go LEFT and hope for the best.
-                parkingSide = Side.LEFT;
-                break;
+            parkingSide = Side.LEFT;
+        }
+        else
+        {
+            /* Actually do something useful */
+            switch (tagOfInterest.id)
+            {
+                case LEFT: //LEFT tag is showing so I should park on the left.
+                    parkingSide = Side.LEFT;
+                    break;
+                case MIDDLE: //MIDDLE tag is showing so I should park on the left.
+                    parkingSide = Side.MIDDLE;
+                    break;
+                case RIGHT: //RIGHT tag is showing so I should park on the left.
+                    parkingSide = Side.RIGHT;
+                    break;
+                default: //tagOfInterest wasn't found so go LEFT and hope for the best.
+                    parkingSide = Side.LEFT;
+                    break;
+            }
         }
         telemetry.addData("Parking: ", parkingSide);
         telemetry.update();

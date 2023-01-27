@@ -29,6 +29,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -257,9 +260,20 @@ public class PowerPlayTagAuto extends LinearOpMode
 
         h.sleep(250);
         //TODO may be over correcting, reduce correction power to 0
-        h.turnIMU(-90, .4,.1);
+        h.turnIMU(-90, .4,.15);
 
-        h.drivePureEncoder(true, h.calculateTicks(7), .4);
+        h.motorTable.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        h.motorTable.setPower(-.25);
+        while(Math.abs(153 - h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle) >= 5 ) {
+          telemetry.addLine("Turning");
+          telemetry.addData()
+          telemetry.update();
+        }
+
+
+        h.motorLift.setTargetPosition(5300);
+
+        //h.drivePureEncoder(true, h.calculateTicks(7), .4);
 
         h.servoExtension.setPower(1);
         extension.reset();

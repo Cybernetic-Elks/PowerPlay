@@ -124,10 +124,10 @@ public class ZTesting_Auto extends LinearOpMode {
                 telemetry.update();
 
                 output = Range.clip(pidController.output(targetPos, h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle), -1, 1);
-                h.motorFrontLeft.setPower(Range.clip(output, -1, 1));
-                h.motorFrontRight.setPower(Range.clip(-output, -1, 1));
-                h.motorBackLeft.setPower(Range.clip(output, -1, 1));
-                h.motorBackRight.setPower(Range.clip(-output, -1, 1));
+                h.motorFrontLeft.setPower(Range.clip(output, -.3, .3));
+                h.motorFrontRight.setPower(Range.clip(-output, -.3, .3));
+                h.motorBackLeft.setPower(Range.clip(output, -.3, .3));
+                h.motorBackRight.setPower(Range.clip(-output, -.3, .3));
             }
             targetPos = -targetPos;
             /*while (!isStopRequested() && Math.abs(targetPos - h.motorFrontLeft.getCurrentPosition()) >= 10) {

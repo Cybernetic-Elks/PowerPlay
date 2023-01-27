@@ -43,7 +43,7 @@ import java.util.ArrayList;
 public class PowerPlayTagAuto extends LinearOpMode
 {
     Hardware h = new Hardware();
-    ElapsedTime extension = new ElapsedTime();
+    ElapsedTime elapsedTime = new ElapsedTime();
 
     public enum Side
     {
@@ -262,25 +262,33 @@ public class PowerPlayTagAuto extends LinearOpMode
         //TODO may be over correcting, reduce correction power to 0
         h.turnIMU(-90, .4,.15);
 
+        h.motorLift.setTargetPosition(5300);
+
         h.motorTable.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         h.motorTable.setPower(-.25);
-        while(Math.abs(153 - h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle) >= 5 ) {
+        while(Math.abs(60 - h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle) >= 3 ) {
           telemetry.addLine("Turning");
-          telemetry.addData()
+          telemetry.addData("Current Angle", h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
           telemetry.update();
         }
+        h.motorTable.setPower(0);
 
-
-        h.motorLift.setTargetPosition(5300);
 
         //h.drivePureEncoder(true, h.calculateTicks(7), .4);
 
         h.servoExtension.setPower(1);
-        extension.reset();
-        while(extension.time() < 5) {
+        elapsedTime.reset();
+        while(elapsedTime.time() < 5) {
 
         }
         h.servoExtension.setPower(0);
+
+        elapsedTime.reset();
+        while(elapsedTime.time() < 5) {
+
+        }
+        h.servoIntakeClose.setPower(1);
+        h.servoIntakeFar.setPower(-1);
 
         //Park in correct zone
         /*switch (parkingSide)

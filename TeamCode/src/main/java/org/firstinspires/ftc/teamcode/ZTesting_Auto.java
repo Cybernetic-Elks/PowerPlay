@@ -125,6 +125,7 @@ public class ZTesting_Auto extends LinearOpMode {
                 telemetry.update();
 
                 output = Range.clip(pidController.output(targetPos, h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle), -1, 1);
+
                 h.motorFrontLeft.setPower(Range.clip(output, -PID_max, PID_max));
                 h.motorFrontRight.setPower(Range.clip(-output, -PID_max, PID_max));
                 h.motorBackLeft.setPower(Range.clip(output, -PID_max, PID_max));

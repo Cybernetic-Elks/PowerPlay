@@ -56,7 +56,6 @@ public class TeleOp2023 extends LinearOpMode {
 
         telemetry.addData("Mode", "waiting for start");
         telemetry.addData("imu calib status", h.imu.getCalibrationStatus().toString());
-        telemetry.update();
         telemetry.addData("Main Initialization ", "complete");
         telemetry.update();
         boolean pressedLastIterationOuttake = false;

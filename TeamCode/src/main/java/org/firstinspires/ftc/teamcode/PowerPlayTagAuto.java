@@ -272,9 +272,8 @@ public class PowerPlayTagAuto extends LinearOpMode
           telemetry.update();
         }
         h.motorTable.setPower(0);
-
-
-        //h.drivePureEncoder(true, h.calculateTicks(7), .4);
+        
+        h.drivePureEncoder(true, h.calculateTicks(7), .4);
 
         h.servoExtension.setPower(1);
         elapsedTime.reset();

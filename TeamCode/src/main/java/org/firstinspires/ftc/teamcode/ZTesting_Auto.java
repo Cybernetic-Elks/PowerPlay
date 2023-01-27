@@ -110,9 +110,9 @@ public class ZTesting_Auto extends LinearOpMode {
             }
         }
         while(!isStopRequested()) {
-            while (!isStopRequested() && Math.abs(targetPos - h.motorFrontLeft.getCurrentPosition()) >= 10) {
+            while (!isStopRequested() && Math.abs(targetAngle - h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle) < 3) {
                 telemetry.addData("Targetpos: ", targetPos);
-                telemetry.addData("Targetpos: ", targetPos);
+                telemetry.addData("Angle: ", h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
                 telemetry.addData("MotorFrontLeft: ", h.motorFrontLeft.getCurrentPosition());
                 telemetry.addData("MotorFrontRight: ", h.motorFrontRight.getCurrentPosition());
                 telemetry.addData("MotorBackLeft: ", h.motorBackLeft.getCurrentPosition());

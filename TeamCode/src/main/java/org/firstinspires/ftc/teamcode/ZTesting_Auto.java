@@ -32,6 +32,7 @@ public class ZTesting_Auto extends LinearOpMode {
     public static double targetPos = 1000;
     public double targetAngle = 90;
     double output = 0;
+    public static double PID_max = .3;
 
     //PIDController pid = new PIDController();
     OpenCvCamera webCam;
@@ -124,12 +125,11 @@ public class ZTesting_Auto extends LinearOpMode {
                 telemetry.update();
 
                 output = Range.clip(pidController.output(targetPos, h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle), -1, 1);
-                h.motorFrontLeft.setPower(Range.clip(output, -1, 1));
-                h.motorFrontRight.setPower(Range.clip(-output, -1, 1));
-                h.motorBackLeft.setPower(Range.clip(output, -1, 1));
-                h.motorBackRight.setPower(Range.clip(-output, -1, 1));
+                h.motorFrontLeft.setPower(Range.clip(output, -PID_max, PID_max));
+                h.motorFrontRight.setPower(Range.clip(-output, -PID_max, PID_max));
+                h.motorBackLeft.setPower(Range.clip(output, -PID_max, PID_max));
+                h.motorBackRight.setPower(Range.clip(-output, -PID_max, PID_max));
             }
-            targetPos = -targetPos;
             /*while (!isStopRequested() && Math.abs(targetPos - h.motorFrontLeft.getCurrentPosition()) >= 10) {
                 telemetry.addData("Targetpos: ", targetPos);
                 telemetry.addData("MotorFrontLeft: ", h.motorFrontLeft.getCurrentPosition());

@@ -246,11 +246,11 @@ public class PowerPlayTagAuto extends LinearOpMode
 
         h.sleep(250);
 
-        h.drivePureEncoder(false, h.calculateTicks(14),.4);
+        h.drivePureEncoder(false, h.calculateTicks(5.5),.4);
 
         h.sleep(250);
         //TODO may be over correcting, reduce correction power to 0
-        h.turnIMU(-90, .4,.2);
+        h.turnIMU(-90, .4,.1);
 
         h.drivePureEncoder(true, h.calculateTicks(7), .4);
 

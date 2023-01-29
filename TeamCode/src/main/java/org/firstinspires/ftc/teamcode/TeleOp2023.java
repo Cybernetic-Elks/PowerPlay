@@ -5,12 +5,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @TeleOp(name = "2023 TeleOp - CHOOSE THIS ONE", group = "TeleOp")
 /**
@@ -20,6 +21,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 public class TeleOp2023 extends LinearOpMode {
 
     OpMode opmode;
+    private DistanceSensor sensorRange;
+
 
     @Override
     public void runOpMode() {
@@ -86,6 +89,7 @@ public class TeleOp2023 extends LinearOpMode {
             telemetry.addData("motorLift current Pos: ", h.motorLift.getCurrentPosition());
             telemetry.addData("touchSensor is pressed: ", h.touch.isPressed());
             telemetry.addData("motorTable current Pos: ", h.motorTable.getCurrentPosition());
+            telemetry.addData("distance (in): ", h.distance.getDistance(DistanceUnit.INCH));
             telemetry.addData("Intrinsic: ", h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
             telemetry.addData("Extrinsic: ", h.imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
             telemetry.update();
@@ -108,6 +112,7 @@ public class TeleOp2023 extends LinearOpMode {
                     h.motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     h.motorLift.setPower(1);
                 }
+
             }
             if (gamepad2.dpad_down && !h.touch.isPressed()) {
                 if (slow2) {
@@ -166,8 +171,8 @@ public class TeleOp2023 extends LinearOpMode {
             */
             //Intake
             if (gamepad2.b) {
-                h.servoIntakeClose.setPower(-1);
-                h.servoIntakeFar.setPower(1);
+                h.servoIntakeClose.setPower(1);
+                h.servoIntakeFar.setPower(-1);
                 dropping = false;
             }
 
@@ -177,8 +182,8 @@ public class TeleOp2023 extends LinearOpMode {
                 outtake.reset();
             }
             if (outtake.time() < 1 && dropping) {
-                h.servoIntakeClose.setPower(1);
-                h.servoIntakeFar.setPower(-1);
+                h.servoIntakeClose.setPower(-1);
+                h.servoIntakeFar.setPower(1);
             } else {
                 dropping = false;
             }

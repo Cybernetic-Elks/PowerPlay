@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 
-import androidx.annotation.NonNull;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
@@ -10,25 +8,19 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
-import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
+
 @Config
 public class Hardware extends LinearOpMode
 {
@@ -60,8 +52,8 @@ public class Hardware extends LinearOpMode
     CRServo servoExtension;
 
     //ColorSensor colorSensor;
-    //DistanceSensor distanceSensor;
-    //Rev2mDistanceSensor distanceSensor;
+    DistanceSensor distance;
+    //Rev2mDistanceSensor distance;
     TouchSensor touch; //In use
 
     ModernRoboticsI2cGyro MRgyro;
@@ -116,6 +108,9 @@ public class Hardware extends LinearOpMode
         motorFrontLeft = aMap.dcMotor.get("motorFrontLeft");
 
         touch = aMap.touchSensor.get("touchSensor");
+        distance = aMap.get(DistanceSensor.class, "distance");
+        //Rev2mDistanceSensor sensorTimeOfFlight = (Rev2mDistanceSensor)sensorRange;
+
 
         servoIntakeClose = aMap.crservo.get("servoIntakeClose");
         servoIntakeFar = aMap.crservo.get("servoIntakeFar");

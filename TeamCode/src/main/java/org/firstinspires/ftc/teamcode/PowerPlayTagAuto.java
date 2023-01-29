@@ -32,6 +32,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -144,6 +145,11 @@ public class PowerPlayTagAuto extends LinearOpMode
         h.motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         h.motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        h.motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        h.motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        h.motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        h.motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         while (!isStarted() && !isStopRequested())
         {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
@@ -252,47 +258,90 @@ public class PowerPlayTagAuto extends LinearOpMode
         h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         h.motorLift.setPower(1);
 
-        h.drivePureEncoder(true,h.calculateTicks(60),.65);
+        h.drivePureEncoder(true,h.calculateTicks(60),.6);
 
         h.sleep(250);
 
-        h.drivePureEncoder(false, h.calculateTicks(5.5),.4);
+        h.drivePureEncoder(false, h.calculateTicks(7),.3);
 
         h.sleep(250);
-        //TODO may be over correcting, reduce correction power to 0
-        h.turnIMU(-90, .4,.15);
 
+        //TODO a bit off might need a PID (more likely PD) or messing with the powers to try and get it more accurate
+        h.turnIMU(-90, .35,.15);
+        h.turnIMU(-90, .2,.15);
+
+        /*double error = -90 - h.getIntegratedHeading();
+        while(Math.abs(error) >= 1 ) {
+            error = -90 - h.getIntegratedHeading();
+            double turnPower = error < 0 ? -.3 : .3;
+            h.motorFrontLeft.setPower(-turnPower);
+            h.motorBackLeft.setPower(-turnPower);
+            h.motorFrontRight.setPower(turnPower);
+            h.motorBackRight.setPower(turnPower);
+
+            telemetry.addLine("Turning...");
+            telemetry.addData("turnPower: ", turnPower);
+            telemetry.addData("Current Angle", h.getIntegratedHeading());
+            telemetry.addData("error: ", error);
+            telemetry.update();
+        }
+        h.setDrivePower(0);*/
+
+        //double distanceError = target - curr;
+        h.servoExtension.setPower(-1);
+
+        //h.drivePureEncoder(true, h.calculateTicks(6.2), .3);
+
+        //TODO positioning is going a bit short still
+        h.setDrivePower((float) .22);
+        while(Math.abs(17.5 - h.distance.getDistance(DistanceUnit.INCH)) >= .5 ) {
+
+            h.setDrivePower((float) .1);
+            telemetry.addLine("Driving...");
+            telemetry.addData("Current Distance", h.distance.getDistance(DistanceUnit.INCH));
+            telemetry.update();
+        }
+        h.setDrivePower(0);
         h.motorLift.setTargetPosition(5300);
+        h.turnIMU(-90, .2,.15);
 
         h.motorTable.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        h.motorTable.setPower(-.25);
-        //TODO 2~ degrees off
-        while(Math.abs(60 - h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle) >= 3 ) {
-          telemetry.addLine("Turning");
+
+        double error = 57 - h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        //TODO The table can be turned a bit less as well to correct for the misalignment
+        while(Math.abs(error) >= 1 ) {
+          error = 57 - h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+          double tablePower = error > 0 ? -.30 : .30;
+          h.motorTable.setPower(tablePower);
+
+          telemetry.addLine("Turning...");
+          telemetry.addData("tablePower: ", tablePower);
           telemetry.addData("Current Angle", h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+          telemetry.addData("error: ", error);
           telemetry.update();
         }
         h.motorTable.setPower(0);
 
-        //TODO move before turning
-        h.drivePureEncoder(true, h.calculateTicks(7), .4);
+        h.sleep(200);
 
         h.servoExtension.setPower(1);
-        elapsedTime.reset();
+        h.sleep(4000);
+        /*elapsedTime.reset();
         while(elapsedTime.time() < 5) {
 
-        }
+        }*/
         h.servoExtension.setPower(0);
-
-        elapsedTime.reset();
+        /*elapsedTime.reset();
         while(elapsedTime.time() < 5) {
 
-        }
+        }*/
 
-        //ToDO didn't outtake
-        h.servoIntakeClose.setPower(1);
-        h.servoIntakeFar.setPower(-1);
-
+        h.servoIntakeClose.setPower(-1);
+        h.servoIntakeFar.setPower(1);
+        h.sleep(2000);
+        h.servoIntakeClose.setPower(0);
+        h.servoIntakeFar.setPower(0);
+        h.sleep(2000);
         //Park in correct zone
         /*switch (parkingSide)
         {

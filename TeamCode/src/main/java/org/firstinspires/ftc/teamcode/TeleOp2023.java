@@ -261,7 +261,7 @@ public class TeleOp2023 extends LinearOpMode {
                 h.motorTable.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 h.motorTable.setPower(1);
             }
-            if (!h.motorTable.isBusy() && !(gamepad2.dpad_left || gamepad2.dpad_right || gamepad2.dpad_up || gamepad2.dpad_down) && !(gamepad2.right_stick_x > 0.01) && !(gamepad2.right_stick_x < -0.01))
+            if (!h.motorTable.isBusy() && !(gamepad2.right_stick_x > 0.01) && !(gamepad2.right_stick_x < -0.01))
             {
                 h.motorTable.setPower(0);
             }

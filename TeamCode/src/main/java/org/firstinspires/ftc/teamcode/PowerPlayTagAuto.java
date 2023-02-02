@@ -258,11 +258,11 @@ public class PowerPlayTagAuto extends LinearOpMode
         h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         h.motorLift.setPower(1);
 
-        h.drivePureEncoder(true,h.calculateTicks(60),.6);
+        h.drivePureEncoder(true,h.calculateTicks(60),.7);
 
         h.sleep(250);
 
-        h.drivePureEncoder(false, h.calculateTicks(7),.3);
+        h.drivePureEncoder(false, h.calculateTicks(7),.4);
 
         h.sleep(250);
 
@@ -327,16 +327,14 @@ public class PowerPlayTagAuto extends LinearOpMode
 
         h.servoExtension.setPower(0);
 
-        //TODO positioning is going a bit short still
-
         h.motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         h.motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         h.motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         h.motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-        h.setDrivePower((float)-.1);
-        while(Math.abs(17.6 - h.distance.getDistance(DistanceUnit.INCH)) >= .3 ) {
+        h.setDrivePower((float)-.07);
+        while(Math.abs(17.5 - h.distance.getDistance(DistanceUnit.INCH)) >= .3 ) {
 
             telemetry.addLine("Driving...");
             telemetry.addData("Motor power", h.motorFrontRight.getPower());
@@ -362,10 +360,76 @@ public class PowerPlayTagAuto extends LinearOpMode
 
         h.servoIntakeClose.setPower(-1);
         h.servoIntakeFar.setPower(1);
-        h.sleep(2000);
+        h.sleep(1400);
         h.servoIntakeClose.setPower(0);
         h.servoIntakeFar.setPower(0);
-        h.sleep(2000);
+
+        for (int i = 0; i < 1; i++)
+        {
+            h.motorTable.setPower(.2);
+
+            h.sleep(1000);
+            h.motorLift.setTargetPosition(1220);
+            h.motorLift.setPower(1);
+            h.servoExtension.setPower(-1);
+
+            error = 2;
+            while(Math.abs(error) >= 1 ) {
+                error = -90 - h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+                double tablePower = error > 0 ? -.30 : .30;
+                h.motorTable.setPower(tablePower);
+
+                telemetry.addLine("Turning to -90...");
+                telemetry.addData("tablePower: ", tablePower);
+                telemetry.addData("Current Angle", h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+                telemetry.addData("error: ", error);
+                telemetry.update();
+            }
+            h.motorTable.setPower(0);
+            h.motorLift.setPower(0);
+
+            h.servoExtension.setPower(1);
+            h.sleep(4000);
+            h.servoExtension.setPower(0);
+
+            h.drivePureEncoder(true,h.calculateTicks(2),.1);
+
+            h.servoIntakeClose.setPower(1);
+            h.servoIntakeFar.setPower(-1);
+            h.sleep(1400);
+            h.servoIntakeClose.setPower(0);
+            h.servoIntakeFar.setPower(0);
+
+            h.servoExtension.setPower(-1);
+
+            h.motorLift.setTargetPosition(5500);
+
+            h.drivePureEncoder(false,h.calculateTicks(2),.1);
+            
+            error = 2;
+            while(Math.abs(error) >= 1 ) {
+                error = 57 - h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+                double tablePower = error > 0 ? -.30 : .30;
+                h.motorTable.setPower(tablePower);
+
+                telemetry.addLine("Turning to 0...");
+                telemetry.addData("tablePower: ", tablePower);
+                telemetry.addData("Current Angle", h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+                telemetry.addData("error: ", error);
+                telemetry.update();
+            }
+
+            h.servoExtension.setPower(1);
+            h.sleep(4000);
+            h.servoExtension.setPower(0);
+
+            h.servoIntakeClose.setPower(-1);
+            h.servoIntakeFar.setPower(1);
+            h.sleep(1700);
+            h.servoIntakeClose.setPower(0);
+            h.servoIntakeFar.setPower(0);
+
+        }
         //Park in correct zone
         /*switch (parkingSide)
         {

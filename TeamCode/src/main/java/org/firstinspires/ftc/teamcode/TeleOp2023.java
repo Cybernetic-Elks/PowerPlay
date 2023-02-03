@@ -21,7 +21,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class TeleOp2023 extends LinearOpMode {
 
     OpMode opmode;
-    private DistanceSensor sensorRange;
 
 
     @Override
@@ -89,7 +88,7 @@ public class TeleOp2023 extends LinearOpMode {
             telemetry.addData("motorLift current Pos: ", h.motorLift.getCurrentPosition());
             telemetry.addData("touchSensor is pressed: ", h.touch.isPressed());
             telemetry.addData("motorTable current Pos: ", h.motorTable.getCurrentPosition());
-            telemetry.addData("distance (in): ", h.distance.getDistance(DistanceUnit.INCH));
+            telemetry.addData("range", String.format("%.01f in", h.distance.getDistance(DistanceUnit.INCH)));
             telemetry.addData("Intrinsic: ", h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
             telemetry.addData("Extrinsic: ", h.imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
             telemetry.update();

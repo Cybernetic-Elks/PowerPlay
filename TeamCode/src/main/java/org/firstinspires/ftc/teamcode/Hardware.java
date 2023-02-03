@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
@@ -80,6 +81,23 @@ public class Hardware extends LinearOpMode
     double gyro_radians;
     double temp;
 
+    private double          robotHeading  = 0;
+    private double          headingOffset = 0;
+    private double          headingError  = 0;
+
+    // These variable are declared here (as class members) so they can be updated in various methods,
+    // but still be displayed by sendTelemetry()
+    private double  targetHeading = 0;
+    private double  driveSpeed    = 0;
+    private double  turnSpeed     = 0;
+    double leftSpeed = 0;
+    double rightSpeed = 0;
+    int frontLeftTarget = 0;
+    int backLeftTarget = 0;
+    int frontRightTarget = 0;
+    int backRightTarget = 0;
+
+
     /**
      * The variables and Equation used to turn the current wheels' encoders into inches
      */
@@ -89,6 +107,13 @@ public class Hardware extends LinearOpMode
     final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);
     //                                                             384.5                       /     11.8677        ~=      32.3988
     //
+
+    // Define the Proportional control coefficient (or GAIN) for "heading control".
+    // We define one value when Turning (larger errors), and the other is used when Driving straight (smaller errors).
+    // Increase these numbers if the heading does not corrects strongly enough (eg: a heavy robot or using tracks)
+    // Decrease these numbers if the heading does not settle on the correct value (eg: very agile robot with omni wheels)
+    static final double     P_TURN_GAIN            = 0.02;     // Larger is more responsive, but also less stable
+    static final double     P_DRIVE_GAIN           = 0.03;     // Larger is more responsive, but also less stable
 
     private Telemetry telemetry;
 
@@ -1122,39 +1147,175 @@ public class Hardware extends LinearOpMode
         return (decay * Math.pow(targetPos,2) + 1);
     }
 
-    public void driveStraight(double power, double time)
+    /**
+     *  Method to drive in a straight line, on a fixed compass heading (angle), based on encoder counts.
+     *  Move will stop if either of these conditions occur:
+     *  1) Move gets to the desired position
+     *  2) Driver stops the opmode running.
+     *
+     * @param maxDriveSpeed MAX Speed for forward/rev motion (range 0 to +1.0) .
+     * @param distance   Distance (in inches) to move from current position.  Negative distance means move backward.
+     * @param heading      Absolute Heading Angle (in Degrees) relative to last gyro reset.
+     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
+     *                   If a relative angle is required, add/subtract from the current robotHeading.
+     */
+    public void driveStraight(double maxDriveSpeed, double distance, double heading)
     {
-        double desiredHeading = getIntegratedHeading();
-        double currentHeading = getIntegratedHeading();
-        double error = 0.0;
-        long beginning = System.currentTimeMillis();
-        long end = beginning + driveTime;
 
-        setDrivePower((float) power);
-        while(System.currentTimeMillis() != end)
+        // Ensure that the opmode is still active
+        // Determine new target position, and pass to motor controller
+        int moveCounts = (int) (distance * COUNTS_PER_INCH);
+        frontLeftTarget = motorFrontLeft.getCurrentPosition() + moveCounts;
+        backLeftTarget = motorBackLeft.getCurrentPosition() + moveCounts;
+        frontRightTarget = motorFrontRight.getCurrentPosition() + moveCounts;
+        backRightTarget = motorBackRight.getCurrentPosition() + moveCounts;
+
+        // Set Target FIRST, then turn on RUN_TO_POSITION
+        motorFrontLeft.setTargetPosition(frontLeftTarget);
+        motorBackLeft.setTargetPosition(backLeftTarget);
+        motorFrontRight.setTargetPosition(frontRightTarget);
+        motorBackRight.setTargetPosition(backRightTarget);
+
+
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // Set the required driving speed  (must be positive for RUN_TO_POSITION)
+        // Start driving straight, and then enter the control loop
+        maxDriveSpeed = Math.abs(maxDriveSpeed);
+        moveRobot(maxDriveSpeed, 0);
+
+        // keep looping while we are still active, and BOTH motors are running.
+        while (opModeIsActive() && Math.abs(motorFrontRight.getCurrentPosition() - frontLeftTarget) > 20)
         {
-            currentHeading = getIntegratedHeading();
-            error = ((desiredHeading - currentHeading) / 180);
-            telemetry.addData("Error: ", error);
-            telemetry.addData("Current Heading: ", getIntegratedHeading());
-            telemetry.update();
-            /*if (differential > 0)
-            {
-                motorFrontLeft.setPower(power);
-                motorBackLeft.setPower(power);
-                motorFrontRight.setPower(differential);
-                motorBackRight.setPower(differential);
-            }*/
+
+            // Determine required steering to keep on heading
+            turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
+
+            // if driving in reverse, the motor correction also needs to be reversed
+            if (distance < 0)
+                turnSpeed *= -1.0;
+
+            // Apply the turning correction to the current driving speed.
+            moveRobot(driveSpeed, turnSpeed);
+
+            // Display drive status for the driver.
+            sendTelemetry(true);
 
         }
 
+        // Stop all motion & Turn off RUN_TO_POSITION
+        moveRobot(0, 0);
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
+    }
+    public void moveRobot(double drive, double turn)
+    {
+        driveSpeed = drive;
+        turnSpeed = turn;
 
+        leftSpeed = drive - turn;
+        rightSpeed = drive + turn;
+
+        //Scale speed down
+        double max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
+        if (max > 1.0)
+        {
+            leftSpeed /= max;
+            rightSpeed /= max;
+        }
+        motorFrontLeft.setPower(leftSpeed);
+        motorBackLeft.setPower(leftSpeed);
+        motorFrontRight.setPower(rightSpeed);
+        motorBackRight.setPower(rightSpeed);
+    }
+    public double getSteeringCorrection(double desiredHeading, double proportionalGain)
+    {
+        double targetHeading = desiredHeading;
+
+        // Get the robot heading by appling an offset to the IMU heading
+        robotHeading = getRawHeading() - headingOffset;
+
+        //Determine the heading current error
+        headingError = targetHeading - robotHeading;
+
+        //Normalize to within +/- 180 degrees
+        while (headingError > 180) headingError -= 360;
+        while (headingError <= -180) headingError += 360;
+
+        return Range.clip(headingError * proportionalGain, -1, 1);
+    }
+    public void turnToHeading(double maxTurnSpeed, double heading) {
+
+        // Run getSteeringCorrection() once to pre-calculate the current error
+        getSteeringCorrection(heading, P_DRIVE_GAIN);
+
+        // keep looping while we are still active, and not on heading.
+        while (opModeIsActive() && (Math.abs(headingError) > 1)) {
+
+            // Determine required steering to keep on heading
+            turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
+
+            // Clip the speed to the maximum permitted value.
+            turnSpeed = Range.clip(turnSpeed, -maxTurnSpeed, maxTurnSpeed);
+
+            // Pivot in place by applying the turning correction
+            moveRobot(0, turnSpeed);
+
+            // Display drive status for the driver.
+            sendTelemetry(false);
+        }
+
+        // Stop all motion;
+        moveRobot(0, 0);
+    }
+
+    /**
+     * read the raw (un-offset Gyro heading) directly from the IMU
+     */
+    public double getRawHeading() {
+        Orientation angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return angles.firstAngle;
+    }
+    /**
+     * Reset the "offset" heading back to zero
+     */
+    public void resetHeading() {
+        // Save a new heading offset equal to the current raw heading.
+        headingOffset = getRawHeading();
+        robotHeading = 0;
+    }
+    /**
+     *  Display the various control parameters while driving
+     *
+     * @param straight  Set to true if we are driving straight, and the encoder positions should be included in the telemetry.
+     */
+    private void sendTelemetry(boolean straight) {
+
+        if (straight) {
+            telemetry.addData("Motion", "Drive Straight");
+            telemetry.addData("Target Pos L:R",  "%7d:%7d",      frontLeftTarget, backLeftTarget, frontRightTarget, backRightTarget);
+            telemetry.addData("Actual Pos L:R",  "%7d:%7d",      motorFrontLeft.getCurrentPosition(),
+                    motorBackLeft.getCurrentPosition(), motorFrontRight.getCurrentPosition(), motorBackRight.getCurrentPosition());
+        } else {
+            telemetry.addData("Motion", "Turning");
+        }
+
+        telemetry.addData("Angle Target:Current", "%5.2f:%5.0f", targetHeading, robotHeading);
+        telemetry.addData("Error:Steer",  "%5.1f:%5.1f", headingError, turnSpeed);
+        telemetry.addData("Wheel Speeds L:R.", "%5.2f : %5.2f", leftSpeed, rightSpeed);
+        telemetry.update();
     }
     public int calculateTicks(double inches)
     {
         int encoderTicks = (int) Math.round(COUNTS_PER_INCH * inches);
         return encoderTicks;
     }
+
 }

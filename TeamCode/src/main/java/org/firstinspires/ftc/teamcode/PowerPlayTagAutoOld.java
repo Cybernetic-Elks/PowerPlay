@@ -29,6 +29,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.RobotAutoDriveByGyro_Linear;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -255,39 +256,39 @@ public class PowerPlayTagAutoOld extends LinearOpMode
         h.sleep(2500);*/
 
         h.strafePureEncoder(true,h.calculateTicks(6),.5);
-        h.sleep(2300);
+        h.sleep(750);
 
         //Drive to row of the high pole
         //h.driveStraight(.3,55,0);
         h.drivePureEncoder(true,h.calculateTicks(55),.2);
-        h.sleep(2500);
+        h.sleep(250);
 
 
 
         h.drivePureEncoder(false,h.calculateTicks(5),.2);
-        h.sleep(2500);
+        h.sleep(250);
 
 
 
         //Line up with high pole
-        h.strafePureEncoder(true,h.calculateTicks(17),.5);
-        h.sleep(2300);
+        h.strafePureEncoder(true,h.calculateTicks(15),.5);
+        h.sleep(230);
 
         //Start raising arm to high tower position
-        h.motorLift.setTargetPosition(5500);
+        h.motorLift.setTargetPosition(5300);
         h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         h.motorLift.setPower(1);
         h.sleep(2500);
 
         //Run towards the pole
         h.drivePureEncoder(true,h.calculateTicks(8),.2);
-        h.sleep(1000);
+        h.sleep(250);
 
         h.servoExtension.setPower(-1);
 
         //Back up a bit to get better alignment
         h.drivePureEncoder(false,h.calculateTicks(2),.2);
-        h.sleep(1000);
+        h.sleep(250);
 
         //Drop cone
         h.servoIntakeClose.setPower(-1);
@@ -311,40 +312,47 @@ public class PowerPlayTagAutoOld extends LinearOpMode
 
         h.sleep(500);
 
-        h.turnIMU(90,.2,1.2);
+        h.strafePureEncoder(true,h.calculateTicks(4),.2);
+        h.sleep(2500);
+
+
+        h.turnIMU(90,.4,.2);
+
+        h.strafePureEncoder(false,h.calculateTicks(4),.2);
+        h.sleep(500);
+
 
 
         //Park in correct zone
-        /*switch (parkingSide)
+        switch (parkingSide)
         {
             case LEFT:
-                h.strafePureEncoder(true, h.calculateTicks(16),.5);
-                h.sleep(2500);
-                h.drivePureEncoder(true, h.calculateTicks(46),.4);
-                h.sleep(2500);
-                h.turnIMU(90,.4,.2);
-                h.sleep(1000);
-                h.drive(true,41,.5);
+                h.setDrivePower((float).07);
+                while(Math.abs(4.5 - h.distance.getDistance(DistanceUnit.INCH)) >= .3 ) {
+                    double motorPower = 4.5 - h.distance.getDistance(DistanceUnit.INCH) > 0 ? -.07 : .07;
+                    h.setDrivePower((float)motorPower);
+                    telemetry.addLine("Driving...");
+                    telemetry.addData("Motor power", h.motorFrontRight.getPower());
+                    telemetry.addData("Current Distance", h.distance.getDistance(DistanceUnit.INCH));
+                    telemetry.update();
+                }
                 break;
             case MIDDLE:
-                h.strafePureEncoder(true, h.calculateTicks(16),.5);
-                h.sleep(2500);
-                h.drivePureEncoder(true, h.calculateTicks(46),.4);
-                h.sleep(2500);
-                h.turnIMU(90,.4,.2);
-                h.sleep(1000);
-                h.drive(true,17,.5);
-
+                h.setDrivePower((float).07);
+                while(Math.abs(32.5 - h.distance.getDistance(DistanceUnit.INCH)) >= .3 ) {
+                    double motorPower = 32.5 - h.distance.getDistance(DistanceUnit.INCH) > 0 ? -.07 : .07;
+                    h.setDrivePower((float)motorPower);
+                    telemetry.addLine("Driving...");
+                    telemetry.addData("Motor power", h.motorFrontRight.getPower());
+                    telemetry.addData("Current Distance", h.distance.getDistance(DistanceUnit.INCH));
+                    telemetry.update();
+                }
                 break;
             case RIGHT:
-                h.strafePureEncoder(true, h.calculateTicks(16),.5);
-                h.sleep(2500);
-                h.drivePureEncoder(true, h.calculateTicks(33),.5);
-                h.sleep(2500);
-                h.turnIMU(90,.4,.2);
-                h.sleep(1000);
+                h.drivePureEncoder(false,12,.2);
+                h.strafePureEncoder(false, 12, .2);
                 break;
-        }*/
+        }
     }
 
     void tagToTelemetry(AprilTagDetection detection)

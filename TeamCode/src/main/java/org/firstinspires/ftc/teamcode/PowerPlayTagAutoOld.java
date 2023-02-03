@@ -27,6 +27,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.RobotAutoDriveByGyro_Linear;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -48,6 +49,7 @@ public class PowerPlayTagAutoOld extends LinearOpMode
     Side parkingSide;
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
+    RobotAutoDriveByGyro_Linear driveByGyro_linear;
 
     static final double FEET_PER_METER = 3.28084;
 
@@ -216,53 +218,104 @@ public class PowerPlayTagAutoOld extends LinearOpMode
         }
 
         /* Actually do something useful */
-        switch (tagOfInterest.id)
+        if(tagOfInterest == null)
         {
-            case LEFT: //LEFT tag is showing so I should park on the left.
-                parkingSide = Side.LEFT;
-                break;
-            case MIDDLE: //MIDDLE tag is showing so I should park on the left.
-                parkingSide = Side.MIDDLE;
-                break;
-            case RIGHT: //RIGHT tag is showing so I should park on the left.
-                parkingSide = Side.RIGHT;
-                break;
-            default: //tagOfInterest wasn't found so go LEFT and hope for the best.
-                parkingSide = Side.LEFT;
-                break;
+            parkingSide = Side.LEFT;
+        }
+        else
+        {
+            /* Actually do something useful */
+            switch (tagOfInterest.id)
+            {
+                case LEFT: //LEFT tag is showing so I should park on the left.
+                    parkingSide = Side.LEFT;
+                    break;
+                case MIDDLE: //MIDDLE tag is showing so I should park on the left.
+                    parkingSide = Side.MIDDLE;
+                    break;
+                case RIGHT: //RIGHT tag is showing so I should park on the left.
+                    parkingSide = Side.RIGHT;
+                    break;
+                default: //tagOfInterest wasn't found so go LEFT and hope for the best.
+                    parkingSide = Side.LEFT;
+                    break;
+            }
         }
         telemetry.addData("Parking: ", parkingSide);
         telemetry.update();
 
+
         //Start raising arm to low tower position
-        h.motorLift.setTargetPosition(2000);
+        h.motorLift.setTargetPosition(1300);
         h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         h.motorLift.setPower(1);
 
-        h.drivePureEncoder(true,h.calculateTicks(2),.2);
-        h.sleep(2500);
+        //Align at center of mat
+        /*h.drivePureEncoder(true,h.calculateTicks(2),.2);
+        h.sleep(2500);*/
 
-        h.strafePureEncoder(true,h.calculateTicks(16),.5);
+        h.strafePureEncoder(true,h.calculateTicks(6),.5);
         h.sleep(2300);
 
-        //TODO Maybe slightly longer to better align with pole
-        h.drivePureEncoder(true,h.calculateTicks(7),.2);
-        h.sleep(2200);
+        //Drive to row of the high pole
+        //h.driveStraight(.3,55,0);
+        h.drivePureEncoder(true,h.calculateTicks(55),.2);
+        h.sleep(2500);
 
+
+
+        h.drivePureEncoder(false,h.calculateTicks(5),.2);
+        h.sleep(2500);
+
+
+
+        //Line up with high pole
+        h.strafePureEncoder(true,h.calculateTicks(17),.5);
+        h.sleep(2300);
+
+        //Start raising arm to high tower position
+        h.motorLift.setTargetPosition(5500);
+        h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        h.motorLift.setPower(1);
+        h.sleep(2500);
+
+        //Run towards the pole
+        h.drivePureEncoder(true,h.calculateTicks(8),.2);
+        h.sleep(1000);
+
+        h.servoExtension.setPower(-1);
+
+        //Back up a bit to get better alignment
         h.drivePureEncoder(false,h.calculateTicks(2),.2);
         h.sleep(1000);
 
         //Drop cone
-        h.servoIntakeClose.setPower(1);
-        h.servoIntakeFar.setPower(-1);
+        h.servoIntakeClose.setPower(-1);
+        h.servoIntakeFar.setPower(1);
         h.sleep(1700);
         h.servoIntakeClose.setPower(0);
         h.servoIntakeFar.setPower(0);
 
-        h.drivePureEncoder(false, h.calculateTicks(5),.6);
-        h.sleep(2500);
+        h.drivePureEncoder(false, h.calculateTicks(5),.4);
+        h.sleep(250);
+
+        h.motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        h.motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        h.motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        h.motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //Start raising arm to ground tower position
+        h.motorLift.setTargetPosition(1300);
+        h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        h.motorLift.setPower(1);
+
+        h.sleep(500);
+
+        h.turnIMU(90,.2,1.2);
+
+
         //Park in correct zone
-        switch (parkingSide)
+        /*switch (parkingSide)
         {
             case LEFT:
                 h.strafePureEncoder(true, h.calculateTicks(16),.5);
@@ -291,7 +344,7 @@ public class PowerPlayTagAutoOld extends LinearOpMode
                 h.turnIMU(90,.4,.2);
                 h.sleep(1000);
                 break;
-        }
+        }*/
     }
 
     void tagToTelemetry(AprilTagDetection detection)

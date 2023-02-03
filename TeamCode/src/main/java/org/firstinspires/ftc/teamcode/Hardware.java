@@ -1044,6 +1044,14 @@ public class Hardware extends LinearOpMode
         motorBackRight.setPower(motorPower);
     }
 
+    public void setIndividualDrivePower(double frontLeft, double backLeft, double frontRight, double backRight)
+    {
+        motorFrontLeft.setPower(frontLeft);
+        motorBackLeft.setPower(backLeft);
+        motorFrontRight.setPower(frontRight);
+        motorBackRight.setPower(backRight);
+    }
+
     public void  driveDecay(boolean forward, int distanceEncodeVal, double power)
     {
 

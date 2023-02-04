@@ -54,6 +54,8 @@ public class PowerPlayTagAutoOld extends LinearOpMode
 
     static final double FEET_PER_METER = 3.28084;
 
+    double motorPower;
+
     // Lens intrinsics
     // UNITS ARE PIXELS
     // NOTE: this calibration is for the C920 webcam at 800x448.
@@ -255,7 +257,7 @@ public class PowerPlayTagAutoOld extends LinearOpMode
         /*h.drivePureEncoder(true,h.calculateTicks(2),.2);
         h.sleep(2500);*/
 
-        h.strafePureEncoder(true,h.calculateTicks(6),.5);
+        h.strafePureEncoder(true,h.calculateTicks(5.5),.5);
         h.sleep(750);
 
         //Drive to row of the high pole
@@ -271,7 +273,7 @@ public class PowerPlayTagAutoOld extends LinearOpMode
 
 
         //Line up with high pole
-        h.strafePureEncoder(true,h.calculateTicks(15),.5);
+        h.strafePureEncoder(true,h.calculateTicks(14),.3);
         h.sleep(230);
 
         //Start raising arm to high tower position
@@ -312,24 +314,30 @@ public class PowerPlayTagAutoOld extends LinearOpMode
 
         h.sleep(500);
 
-        h.strafePureEncoder(true,h.calculateTicks(4),.2);
+
+        h.strafePureEncoder(true,h.calculateTicks(2),.2);
         h.sleep(2500);
 
 
         h.turnIMU(90,.4,.2);
 
-        h.strafePureEncoder(false,h.calculateTicks(4),.2);
+        h.strafePureEncoder(false,h.calculateTicks(3.5),.2);
         h.sleep(500);
 
 
 
         //Park in correct zone
+        h.motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        h.motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        h.motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        h.motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         switch (parkingSide)
         {
             case LEFT:
                 h.setDrivePower((float).07);
-                while(Math.abs(4.5 - h.distance.getDistance(DistanceUnit.INCH)) >= .3 ) {
-                    double motorPower = 4.5 - h.distance.getDistance(DistanceUnit.INCH) > 0 ? -.07 : .07;
+                while(Math.abs(5 - h.distance.getDistance(DistanceUnit.INCH)) >= 0.3 ) {
+                    motorPower = 5 - h.distance.getDistance(DistanceUnit.INCH) > 0 ? -.07 : .07;
                     h.setDrivePower((float)motorPower);
                     telemetry.addLine("Driving...");
                     telemetry.addData("Motor power", h.motorFrontRight.getPower());
@@ -339,20 +347,25 @@ public class PowerPlayTagAutoOld extends LinearOpMode
                 break;
             case MIDDLE:
                 h.setDrivePower((float).07);
-                while(Math.abs(32.5 - h.distance.getDistance(DistanceUnit.INCH)) >= .3 ) {
-                    double motorPower = 32.5 - h.distance.getDistance(DistanceUnit.INCH) > 0 ? -.07 : .07;
+                while(Math.abs(35.5 - h.distance.getDistance(DistanceUnit.INCH)) >= 0.3 ) {
+                    motorPower = 35.5 - h.distance.getDistance(DistanceUnit.INCH) > 0 ? -.07 : .07;;
                     h.setDrivePower((float)motorPower);
                     telemetry.addLine("Driving...");
                     telemetry.addData("Motor power", h.motorFrontRight.getPower());
                     telemetry.addData("Current Distance", h.distance.getDistance(DistanceUnit.INCH));
                     telemetry.update();
                 }
+                h.strafePureEncoder(true, h.calculateTicks(2), .2);
+                h.sleep(500);
                 break;
             case RIGHT:
-                h.drivePureEncoder(false,12,.2);
-                h.strafePureEncoder(false, 12, .2);
+                h.drivePureEncoder(false,h.calculateTicks(10),.2);
+                h.sleep(250);
+                h.strafePureEncoder(true, h.calculateTicks(4), .2);
+                h.sleep(500);
                 break;
         }
+        h.setDrivePower(0);
     }
 
     void tagToTelemetry(AprilTagDetection detection)

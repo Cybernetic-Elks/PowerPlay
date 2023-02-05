@@ -257,7 +257,7 @@ public class PowerPlayTagAutoOld extends LinearOpMode
         /*h.drivePureEncoder(true,h.calculateTicks(2),.2);
         h.sleep(2500);*/
 
-        h.strafePureEncoder(true,h.calculateTicks(5.5),.5);
+        h.strafePureEncoder(true,h.calculateTicks(5.5),.35);
         h.sleep(750);
 
         //Drive to row of the high pole
@@ -289,7 +289,7 @@ public class PowerPlayTagAutoOld extends LinearOpMode
         h.servoExtension.setPower(-1);
 
         //Back up a bit to get better alignment
-        h.drivePureEncoder(false,h.calculateTicks(2),.2);
+        h.drivePureEncoder(false,h.calculateTicks(2.25),.2);
         h.sleep(250);
 
         //Drop cone
@@ -299,7 +299,7 @@ public class PowerPlayTagAutoOld extends LinearOpMode
         h.servoIntakeClose.setPower(0);
         h.servoIntakeFar.setPower(0);
 
-        h.drivePureEncoder(false, h.calculateTicks(5),.4);
+        h.drivePureEncoder(false, h.calculateTicks(5),.3);
         h.sleep(250);
 
         h.motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -307,7 +307,7 @@ public class PowerPlayTagAutoOld extends LinearOpMode
         h.motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         h.motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        //Start raising arm to ground tower position
+        //Start lowering arm to ground tower position
         h.motorLift.setTargetPosition(1300);
         h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         h.motorLift.setPower(1);
@@ -315,15 +315,11 @@ public class PowerPlayTagAutoOld extends LinearOpMode
         h.sleep(500);
 
 
-        h.strafePureEncoder(true,h.calculateTicks(2),.2);
+        h.strafePureEncoder(true,h.calculateTicks(5.5),.2);
         h.sleep(2500);
 
 
-        h.turnIMU(90,.4,.2);
-
-        h.strafePureEncoder(false,h.calculateTicks(3.5),.2);
-        h.sleep(500);
-
+        h.turnIMU(90,.3,.2);
 
 
         //Park in correct zone
@@ -347,8 +343,8 @@ public class PowerPlayTagAutoOld extends LinearOpMode
                 break;
             case MIDDLE:
                 h.setDrivePower((float).07);
-                while(Math.abs(35.5 - h.distance.getDistance(DistanceUnit.INCH)) >= 0.3 ) {
-                    motorPower = 35.5 - h.distance.getDistance(DistanceUnit.INCH) > 0 ? -.07 : .07;;
+                while(Math.abs(33.5 - h.distance.getDistance(DistanceUnit.INCH)) >= 0.3 ) {
+                    motorPower = 33.5 - h.distance.getDistance(DistanceUnit.INCH) > 0 ? -.07 : .07;;
                     h.setDrivePower((float)motorPower);
                     telemetry.addLine("Driving...");
                     telemetry.addData("Motor power", h.motorFrontRight.getPower());

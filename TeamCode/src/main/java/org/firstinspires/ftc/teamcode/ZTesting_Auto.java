@@ -27,7 +27,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 public class ZTesting_Auto extends LinearOpMode {
     static Hardware h = new Hardware();
     public static PIDController pidController = new PIDController(h.Kp,h.Ki,h.Kd,.25);
-    FtcDashboard dashboard;
+
 
     public static double targetPos = 1000;
     public double targetAngle = 90;
@@ -61,12 +61,6 @@ public class ZTesting_Auto extends LinearOpMode {
         telemetry.update();
 
 
-        dashboard = FtcDashboard.getInstance();
-        telemetry = dashboard.getTelemetry();
-
-        TelemetryPacket packet = new TelemetryPacket();
-
-        dashboard.setTelemetryTransmissionInterval(25);
 
 
 
@@ -82,87 +76,24 @@ public class ZTesting_Auto extends LinearOpMode {
         telemetry.addData("Mode", "waiting for start");
         telemetry.addData("imu calib status", h.imu.getCalibrationStatus().toString());
         telemetry.update();
-        h.motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        h.motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        h.motorFrontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        h.motorBackLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        h.motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        h.motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        h.motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        h.motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        h.motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        h.motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        h.motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        h.motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        h.motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        h.motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        h.motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        h.motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         waitForStart();
 
-        /*h.motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        h.motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        h.motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        h.motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-*/      while (!isStopRequested())
-        {
-            if(gamepad1.a)
-            {
-                break;
-            }
-        }
-        while(!isStopRequested()) {
-            while (!isStopRequested() && Math.abs(targetAngle - h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle) < 3) {
-                telemetry.addData("Targetpos: ", targetPos);
-                telemetry.addData("Angle: ", h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
-                telemetry.addData("MotorFrontLeft: ", h.motorFrontLeft.getCurrentPosition());
-                telemetry.addData("MotorFrontRight: ", h.motorFrontRight.getCurrentPosition());
-                telemetry.addData("MotorBackLeft: ", h.motorBackLeft.getCurrentPosition());
-                telemetry.addData("MotorBackRight: ", h.motorBackRight.getCurrentPosition());
-                telemetry.addData("Running...", "");
-                telemetry.addData("Output", output);
-                packet.put("error", targetPos - h.motorFrontLeft.getCurrentPosition());
-                packet.put("targetPos:  ", targetPos);
-                packet.put("currentPos: ", h.motorFrontLeft.getCurrentPosition());
-                telemetry.update();
+        h.resetHeading();
 
-                output = Range.clip(pidController.output(targetPos, h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle), -1, 1);
+        /*h.drivePureEncoder(true, h.calculateTicks(10), .3);
+        h.sleep(500);*/
 
-                h.motorFrontLeft.setPower(Range.clip(output, -PID_max, PID_max));
-                h.motorFrontRight.setPower(Range.clip(-output, -PID_max, PID_max));
-                h.motorBackLeft.setPower(Range.clip(output, -PID_max, PID_max));
-                h.motorBackRight.setPower(Range.clip(-output, -PID_max, PID_max));
-            }
-            /*while (!isStopRequested() && Math.abs(targetPos - h.motorFrontLeft.getCurrentPosition()) >= 10) {
-                telemetry.addData("Targetpos: ", targetPos);
-                telemetry.addData("MotorFrontLeft: ", h.motorFrontLeft.getCurrentPosition());
-                telemetry.addData("MotorFrontRight: ", h.motorFrontRight.getCurrentPosition());
-                telemetry.addData("MotorBackLeft: ", h.motorBackLeft.getCurrentPosition());
-                telemetry.addData("MotorBackRight: ", h.motorBackRight.getCurrentPosition());
-                telemetry.addData("Running...", "");
-                telemetry.addData("Output", output);
-                packet.put("error", targetPos - h.motorFrontLeft.getCurrentPosition());
-                packet.put("targetPos:  ", targetPos);
-                packet.put("currentPos: ", h.motorFrontLeft.getCurrentPosition());
-                telemetry.update();
+        h.driveStraight(.5, 25, 0.0);
+        h.sleep(5000);
 
-                output = Range.clip(pidController.output(targetPos, h.motorFrontLeft.getCurrentPosition()), -1, 1);
-                h.motorFrontLeft.setPower(Range.clip(pidController.output(targetPos, h.motorFrontLeft.getCurrentPosition()), -1, 1));
-                h.motorFrontRight.setPower(Range.clip(pidController.output(targetPos, h.motorFrontRight.getCurrentPosition()), -1, 1));
-                h.motorBackLeft.setPower(Range.clip(pidController.output(targetPos, h.motorBackLeft.getCurrentPosition()), -1, 1));
-                h.motorBackRight.setPower(Range.clip(pidController.output(targetPos, h.motorBackRight.getCurrentPosition()), -1, 1));
-            }
-            targetPos = -targetPos;*/
-        }
-        while(!isStopRequested())
-        {
-            telemetry.addData("Targetpos: ", targetPos);
-            telemetry.addData("MotorFrontLeft: ", h.motorFrontLeft.getCurrentPosition());
-            telemetry.addData("MotorFrontRight: ", h.motorFrontRight.getCurrentPosition());
-            telemetry.addData("MotorBackLeft: ", h.motorBackLeft.getCurrentPosition());
-            telemetry.addData("MotorBackRight: ", h.motorBackRight.getCurrentPosition());
-            telemetry.addData("Finished", "");
-            telemetry.update();
-
-        }
+        /*h.drivePureEncoder(true, h.calculateTicks(10), .3);
+       h.sleep(500);*/
 
     }
 }
+// Hello this is Loren just wanting to say hello and your doing great.

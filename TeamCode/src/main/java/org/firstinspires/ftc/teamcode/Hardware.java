@@ -309,16 +309,12 @@ public class Hardware extends LinearOpMode
     public void drivePureEncoder(boolean forward, int distanceEncodeVal, double power)
     {
 
-
+        DcMotor.RunMode lastMode = motorFrontLeft.getMode();
 
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        driveTime = distanceEncodeVal;
-
-
 
 
         if(forward)
@@ -385,10 +381,10 @@ public class Hardware extends LinearOpMode
         motorBackLeft.setTargetPosition(0);
         motorBackRight.setTargetPosition(0);*/
 
-        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontLeft.setMode(lastMode);
+        motorFrontRight.setMode(lastMode);
+        motorBackLeft.setMode(lastMode);
+        motorBackRight.setMode(lastMode);
 
         motorFrontLeft.setPower(0);
         motorFrontRight.setPower(0);
@@ -1156,117 +1152,6 @@ public class Hardware extends LinearOpMode
         return encoderTicks;
     }
 
-
-
-    //----------------------------------------------------
-    //Attempt to remake the driveStraight function fromm scratch
-    /**
-     *  Method to drive in a straight line, on a fixed compass heading (angle), based on encoder counts.
-     *  Move will stop if either of these conditions occur:
-     *  1) Move gets to the desired position
-     *  2) Driver stops the opmode running.
-     *
-     * @param maxDriveSpeed MAX Speed for forward/rev motion (range 0 to +1.0) .
-     * @param distance   Distance (in inches) to move from current position.  Negative distance means move backward.
-     * @param heading      Absolute Heading Angle (in Degrees) relative to last gyro reset.
-     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-     *                   If a relative angle is required, add/subtract from the current robotHeading.
-     */
-
-    public void driveStraight (double maxDriveSpeed, double distance, double heading) {
-
-        // Ensure that opmode is still active
-        if (opModeIsActive()) {
-
-            // Determine new target position, and pass to motor controller
-            int moveCounts = (int) (distance * COUNTS_PER_INCH);
-            frontLeftTarget = motorFrontLeft.getCurrentPosition() + moveCounts;
-            frontRightTarget = motorFrontRight.getCurrentPosition() + moveCounts;
-            backLeftTarget = motorBackLeft.getCurrentPosition() + moveCounts;
-            backRightTarget = motorBackRight.getCurrentPosition() + moveCounts;
-
-            //set Target FIRST, then turn on RUN_TO_POSITION
-            motorFrontLeft.setTargetPosition(frontLeftTarget);
-            motorFrontRight.setTargetPosition(frontRightTarget);
-            motorBackLeft.setTargetPosition(backLeftTarget);
-            motorBackRight.setTargetPosition(backRightTarget);
-
-            motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            // Set the required driving speed  (must be positive for RUN_TO_POSITION)
-            // Start driving straight, and then enter the control loop
-            maxDriveSpeed = Math.abs(maxDriveSpeed);
-            moveRobot(maxDriveSpeed, 0);
-
-            while (opModeIsActive() && (motorFrontLeft.isBusy() && motorFrontRight.isBusy() && motorBackLeft.isBusy() && motorBackRight.isBusy())) {
-
-                // Determine required steering to keep on heading
-                turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
-
-                // if driving in reverse, the motor correction also needs to be reversed
-                if (distance < 0) {
-                    turnSpeed *= -1.0;
-                }
-
-                // Apply the turning correction to the current driving speed.
-                moveRobot(driveSpeed, turnSpeed);
-
-            }
-            // Stop all motion & Turn off RUN_TO_POSITION
-            moveRobot(0, 0);
-            motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-    }
-
-    public double getSteeringCorrection(double desiredHeading, double proportionalGain) {
-        targetHeading = desiredHeading;
-
-        // Get the robot heading by applying an offset to the IMU heading
-        robotHeading = getRawHeading() - headingOffset;
-
-        // Determine the heading current error
-        headingError = targetHeading - robotHeading;
-
-        // Normalize the error to be within +/- 180 degrees
-        while (headingError > 180)  headingError -= 360;
-        while (headingError <= -180) headingError += 360;
-
-        // Multiply the error by the gain to determine the required steering correction/  Limit the result to +/- 1.0
-        return Range.clip(headingError * proportionalGain, -1, 1);
-    }
-
-    public void moveRobot(double drive, double turn) {
-        driveSpeed = drive;     // save this value as a class member so it can be used by telemetry.
-        turnSpeed = turn;      // save this value as a class member so it can be used by telemetry.
-
-
-        frontLeftSpeed = drive - turn;
-        frontRightSpeed = drive + turn;
-        backLeftSpeed = drive - turn;
-        backRightSpeed = drive + turn;
-
-        // Scale speeds down if either one exceeds +/- 1.0;
-        double max = Math.max(Math.max(Math.abs(frontLeftSpeed), Math.abs(frontRightSpeed)),
-                Math.max(Math.abs(backLeftSpeed), Math.abs(backRightSpeed)));
-        if (max > 1.0) {
-            frontLeftSpeed /= max;
-            frontRightSpeed /= max;
-            backLeftSpeed /= max;
-            backRightSpeed /= max;
-        }
-
-        motorFrontLeft.setPower(frontLeftSpeed);
-        motorFrontRight.setPower(frontRightSpeed);
-        motorBackLeft.setPower(backLeftSpeed);
-        motorBackRight.setPower(backRightSpeed);
-    }
-
     public double getRawHeading() {
         Orientation angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return angles.firstAngle;
@@ -1280,4 +1165,61 @@ public class Hardware extends LinearOpMode
         headingOffset = getRawHeading();
         robotHeading = 0;
     }
+
+    public void driveStraight(double distance, double heading, double maxDriveSpeed)
+    {
+        final double P_DRIVE_GAIN = 0;
+        //Find new target pos and pass to motor controller
+        int distanceEncoderTicks = (int)(distance * COUNTS_PER_INCH);
+        int leftEncoderTarget = motorFrontLeft.getCurrentPosition() + distanceEncoderTicks;
+        int rightEncoderTarget = motorFrontRight.getCurrentPosition() + distanceEncoderTicks;
+        
+        //Set target and then turn on RUN_TO_POSITION
+        motorFrontLeft.setTargetPosition(leftEncoderTarget);
+        motorFrontRight.setTargetPosition(rightEncoderTarget);
+        
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // Set the required driving speed  (must be positive for RUN_TO_POSITION)
+        // Start driving straight, and then enter the control loop
+        maxDriveSpeed = Math.abs(maxDriveSpeed);
+        double driveSpeed = maxDriveSpeed;
+        motorFrontLeft.setPower(maxDriveSpeed);
+        motorFrontRight.setPower(maxDriveSpeed);
+        
+        //Enter control loop while program is still running and both motors are busy
+        while(opModeIsActive() && (motorFrontLeft.isBusy() && motorFrontRight.isBusy()))
+        {
+            
+            //Determine steering correction needing to stay on heading
+            double turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
+            
+            if(distance < 0)
+                turnSpeed *= -1.0;
+            
+            motorFrontLeft.setPower(driveSpeed - turnSpeed);
+            motorFrontRight.setPower(driveSpeed + turnSpeed);
+            
+        }
+    }
+
+    double getSteeringCorrection(double desiredHeading, double proportionalGain)
+    {
+
+        //Get the robot heading by applying an offset to the IMU heading
+        robotHeading = getRawHeading() - headingOffset;
+
+        //Determine the heading current error
+        headingError = desiredHeading - robotHeading;
+
+        // Normalize the error to be within +/- 180 degrees
+        while (headingError > 180)  headingError -= 360;
+        while (headingError <= -180) headingError += 360;
+
+        // Multiply the error by the gain to determine the required steering correction/  Limit the result to +/- 1.0
+        return Range.clip(headingError * proportionalGain, -1, 1);
+    }
 }
+
+

@@ -33,6 +33,11 @@ public class ZTesting_Auto extends LinearOpMode {
     public double targetAngle = 90;
     double output = 0;
     public static double PID_max = .3;
+    double slow = .25;
+    double rotateSpeed = .35;
+    double rotateSpeedSlow = .25;
+    double leftPower = 0;
+    double rightPower = 0;
 
     //PIDController pid = new PIDController();
     OpenCvCamera webCam;
@@ -76,23 +81,99 @@ public class ZTesting_Auto extends LinearOpMode {
         telemetry.addData("Mode", "waiting for start");
         telemetry.addData("imu calib status", h.imu.getCalibrationStatus().toString());
         telemetry.update();
-        h.motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        h.motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        h.motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        h.motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
         waitForStart();
 
+        /*h.setDrivePower((float).5);
+        h.sleep(5000);
+        h.setDrivePower(0);*/
+
         h.resetHeading();
 
-        /*h.drivePureEncoder(true, h.calculateTicks(10), .3);
-        h.sleep(500);*/
+        while(opModeIsActive())
+        {
+            if(Math.abs(h.getRawHeading()) <= 3)
+            {
+                leftPower = slow - (h.getRawHeading() / 15);
+                rightPower = slow - (h.getRawHeading() / 15);
+                telemetry.addLine("IMU is within 3 degrees of 0");
+                telemetry.addData("leftPower: ", leftPower);
+                telemetry.addData("rightPower: ", rightPower);
+                telemetry.update();
+            }
+            else if (Math.abs(h.getRawHeading()) < 10)
+            {
+                telemetry.addLine("IMU is within 10 degrees of 0");
 
-        h.driveStraight(.5, 25, 0.0);
-        h.sleep(5000);
-
-        /*h.drivePureEncoder(true, h.calculateTicks(10), .3);
-       h.sleep(500);*/
+                if (h.getIntegratedHeading() > 0) {
+                    telemetry.addLine("IMU is positive, accelerating right motor");
+                    leftPower = slow;
+                    rightPower = 1.1 * slow;
+                } else if (h.getIntegratedHeading() < 0) {
+                    telemetry.addLine("IMU is positive, accelerating left motor");
+                    leftPower = 1.1 * slow;
+                    rightPower = slow;
+                }
+                telemetry.addData("leftPower: ", leftPower);
+                telemetry.addData("rightPower: ", rightPower);
+                telemetry.update();
+            }
+            else
+            {
+                telemetry.addLine("IMU is farther then 10 degrees of 0");
+                if(h.getIntegratedHeading() > 0)
+                {
+                    while(h.getIntegratedHeading() > 10 && !isStopRequested())
+                    {
+                        telemetry.addLine("IMU is greater then 10: turning left");
+                        telemetry.update();
+                        leftPower = -rotateSpeed;
+                        rightPower = rotateSpeed;
+                    }
+                }
+                while (h.getIntegratedHeading() > 0 && !isStopRequested())
+                {
+                    telemetry.addLine("IMU is > 0, slowly turning left");
+                    telemetry.update();
+                    leftPower = -rotateSpeedSlow;
+                    rightPower = rotateSpeedSlow;
+                }
+                while (h.getIntegratedHeading() < 0 && !isStopRequested())
+                {
+                    telemetry.addLine("IMU is < 0, rotating right");
+                    telemetry.update();
+                    leftPower = rotateSpeedSlow;
+                    rightPower = -rotateSpeedSlow;
+                }
+            }
+            /*else
+            {
+                while (gyro.getAngle() ＜-10 && isAutonomous())
+                {
+                victorLeft.set(rotateSpeed);
+                victorRight.set(rotateSpeed);
+                }
+                while (gyro.getAngle() ＜0 && isAutonomous())
+                {
+                victorLeft.set(rotateSpeedSlow);
+                victorRight.set(rotateSpeedSlow);
+                }
+                while (gyro.getAngle() ＞0 && isAutonomous())
+                {
+                victorLeft.set(-rotateSpeedSlow);
+                victorRight.set(-rotateSpeedSlow);
+                }
+            }*/;
+            telemetry.addData("leftPower: ", leftPower);
+            telemetry.addData("rightPower: ", rightPower);
+            telemetry.addData("IMU: ", h.getRawHeading());
+            telemetry.update();
+            h.motorFrontLeft.setPower(leftPower);
+            h.motorBackLeft.setPower(leftPower);
+            h.motorFrontRight.setPower(rightPower);
+            h.motorBackRight.setPower(rightPower);
+        }
 
     }
 }

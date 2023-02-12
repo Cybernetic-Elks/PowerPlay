@@ -115,7 +115,7 @@ public class Hardware extends LinearOpMode
     // Increase these numbers if the heading does not corrects strongly enough (eg: a heavy robot or using tracks)
     // Decrease these numbers if the heading does not settle on the correct value (eg: very agile robot with omni wheels)
     static final double     P_TURN_GAIN            = 0.02;     // Larger is more responsive, but also less stable
-    static final double     P_DRIVE_GAIN           = 0.03;     // Larger is more responsive, but also less stable
+    static final double     P_DRIVE_GAIN           = 0.04;     // Larger is more responsive, but also less stable
 
     private Telemetry telemetry;
 
@@ -133,6 +133,26 @@ public class Hardware extends LinearOpMode
         motorBackRight = aMap.dcMotor.get("motorBackRight");
         motorBackLeft = aMap.dcMotor.get("motorBackLeft");
         motorFrontLeft = aMap.dcMotor.get("motorFrontLeft");
+
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        motorFrontRight.setPower(0);
+        motorBackRight.setPower(0);
+        motorFrontLeft.setPower(0);
+        motorBackLeft.setPower(0);
 
         touch = aMap.touchSensor.get("touchSensor");
         distance = aMap.get(DistanceSensor.class, "distance");
@@ -153,10 +173,7 @@ public class Hardware extends LinearOpMode
 
 
 
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 
         /*
         motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -166,20 +183,7 @@ public class Hardware extends LinearOpMode
 
          */
 
-        motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        motorFrontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorBackRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        motorFrontRight.setPower(0);
-        motorBackRight.setPower(0);
-        motorFrontLeft.setPower(0);
-        motorBackLeft.setPower(0);
 
         /*motorLift2 = aMap.dcMotor.get("motorLift2");
         motorLift2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -1168,25 +1172,37 @@ public class Hardware extends LinearOpMode
 
     public void driveStraight(double distance, double heading, double maxDriveSpeed)
     {
-        final double P_DRIVE_GAIN = 0;
         //Find new target pos and pass to motor controller
         int distanceEncoderTicks = (int)(distance * COUNTS_PER_INCH);
-        int leftEncoderTarget = motorFrontLeft.getCurrentPosition() + distanceEncoderTicks;
-        int rightEncoderTarget = motorFrontRight.getCurrentPosition() + distanceEncoderTicks;
+        telemetry.addData("distanceEncoderTicks: ", distanceEncoderTicks);
+        telemetry.update();
+
+        int frontLeftEncoderTarget = motorFrontLeft.getCurrentPosition() + distanceEncoderTicks;
+        int backLeftEncoderTarget = motorBackLeft.getCurrentPosition() + distanceEncoderTicks;
+        int frontRightEncoderTarget = motorFrontRight.getCurrentPosition() + distanceEncoderTicks;
+        int backRightEncoderTarget = motorBackRight.getCurrentPosition() + distanceEncoderTicks;
         
         //Set target and then turn on RUN_TO_POSITION
-        motorFrontLeft.setTargetPosition(leftEncoderTarget);
-        motorFrontRight.setTargetPosition(rightEncoderTarget);
+        motorFrontLeft.setTargetPosition(frontLeftEncoderTarget);
+        motorBackLeft.setTargetPosition(backLeftEncoderTarget);
+        motorFrontRight.setTargetPosition(frontRightEncoderTarget);
+        motorBackRight.setTargetPosition(backRightEncoderTarget);
         
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Set the required driving speed  (must be positive for RUN_TO_POSITION)
         // Start driving straight, and then enter the control loop
         maxDriveSpeed = Math.abs(maxDriveSpeed);
         double driveSpeed = maxDriveSpeed;
+
         motorFrontLeft.setPower(maxDriveSpeed);
+        motorBackLeft.setPower(maxDriveSpeed);
         motorFrontRight.setPower(maxDriveSpeed);
+        motorBackRight.setPower(maxDriveSpeed);
+
         
         //Enter control loop while program is still running and both motors are busy
         while(opModeIsActive() && (motorFrontLeft.isBusy() && motorFrontRight.isBusy()))
@@ -1199,8 +1215,9 @@ public class Hardware extends LinearOpMode
                 turnSpeed *= -1.0;
             
             motorFrontLeft.setPower(driveSpeed - turnSpeed);
+            motorBackLeft.setPower(driveSpeed - turnSpeed);
             motorFrontRight.setPower(driveSpeed + turnSpeed);
-            
+            motorBackRight.setPower(driveSpeed + turnSpeed);
         }
     }
 

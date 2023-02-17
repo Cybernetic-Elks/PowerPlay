@@ -73,7 +73,6 @@ public class ZTesting_Auto extends LinearOpMode {
         while (!isStopRequested() && !h.imu.isGyroCalibrated())
         {
             sleep(50);
-            idle();
         }
 
 
@@ -91,12 +90,13 @@ public class ZTesting_Auto extends LinearOpMode {
 
         h.resetHeading();
 
-        while(opModeIsActive())
+        h.driveStraight(true,6000,0,.3);
+        /*while(opModeIsActive())
         {
             if(Math.abs(h.getRawHeading()) <= 3)
             {
                 leftPower = slow - (h.getRawHeading() / 15);
-                rightPower = slow - (h.getRawHeading() / 15);
+                rightPower = slow + (h.getRawHeading() / 15);
                 telemetry.addLine("IMU is within 3 degrees of 0");
                 telemetry.addData("leftPower: ", leftPower);
                 telemetry.addData("rightPower: ", rightPower);
@@ -164,7 +164,7 @@ public class ZTesting_Auto extends LinearOpMode {
                 victorLeft.set(-rotateSpeedSlow);
                 victorRight.set(-rotateSpeedSlow);
                 }
-            }*/;
+            };
             telemetry.addData("leftPower: ", leftPower);
             telemetry.addData("rightPower: ", rightPower);
             telemetry.addData("IMU: ", h.getRawHeading());
@@ -173,7 +173,8 @@ public class ZTesting_Auto extends LinearOpMode {
             h.motorBackLeft.setPower(leftPower);
             h.motorFrontRight.setPower(rightPower);
             h.motorBackRight.setPower(rightPower);
-        }
+        }*/
+
 
     }
 }

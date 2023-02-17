@@ -1170,31 +1170,28 @@ public class Hardware extends LinearOpMode
         robotHeading = 0;
     }
 
-    public void driveStraight(double distance, double heading, double maxDriveSpeed)
+    public void driveStraight(boolean forward, double distance, double heading, double maxDriveSpeed)
     {
         //Find new target pos and pass to motor controller
-        int distanceEncoderTicks = (int)(distance * COUNTS_PER_INCH);
+        int distanceEncoderTicks = calculateTicks(distance);
         telemetry.addData("distanceEncoderTicks: ", distanceEncoderTicks);
         telemetry.update();
 
-        int frontLeftEncoderTarget = motorFrontLeft.getCurrentPosition() + distanceEncoderTicks;
-        int backLeftEncoderTarget = motorBackLeft.getCurrentPosition() + distanceEncoderTicks;
-        int frontRightEncoderTarget = motorFrontRight.getCurrentPosition() + distanceEncoderTicks;
-        int backRightEncoderTarget = motorBackRight.getCurrentPosition() + distanceEncoderTicks;
+        DcMotor.RunMode lastMode = motorFrontLeft.getMode();
+
+        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
         
         //Set target and then turn on RUN_TO_POSITION
-        motorFrontLeft.setTargetPosition(frontLeftEncoderTarget);
-        motorBackLeft.setTargetPosition(backLeftEncoderTarget);
-        motorFrontRight.setTargetPosition(frontRightEncoderTarget);
-        motorBackRight.setTargetPosition(backRightEncoderTarget);
-        
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorFrontLeft.setTargetPosition(distanceEncoderTicks);
+        motorBackLeft.setTargetPosition(distanceEncoderTicks);
+        motorFrontRight.setTargetPosition(distanceEncoderTicks);
+        motorBackRight.setTargetPosition(distanceEncoderTicks);
 
-        // Set the required driving speed  (must be positive for RUN_TO_POSITION)
-        // Start driving straight, and then enter the control loop
         maxDriveSpeed = Math.abs(maxDriveSpeed);
         double driveSpeed = maxDriveSpeed;
 
@@ -1203,16 +1200,31 @@ public class Hardware extends LinearOpMode
         motorFrontRight.setPower(maxDriveSpeed);
         motorBackRight.setPower(maxDriveSpeed);
 
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // Set the required driving speed  (must be positive for RUN_TO_POSITION)
+        // Start driving straight, and then enter the control loop
+
         
         //Enter control loop while program is still running and both motors are busy
-        while(opModeIsActive() && (motorFrontLeft.isBusy() && motorFrontRight.isBusy()))
+        while(true)
         {
+
+            telemetry.addData("TurnSpeed", turnSpeed);
+            telemetry.addData("Raw Heading", getRawHeading());
+            telemetry.addData("Heading Error", headingError);
+            telemetry.update();
+
             
             //Determine steering correction needing to stay on heading
             double turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
             
-            if(distance < 0)
+            if (!forward) {
                 turnSpeed *= -1.0;
+            }
             
             motorFrontLeft.setPower(driveSpeed - turnSpeed);
             motorBackLeft.setPower(driveSpeed - turnSpeed);
@@ -1225,7 +1237,7 @@ public class Hardware extends LinearOpMode
     {
 
         //Get the robot heading by applying an offset to the IMU heading
-        robotHeading = getRawHeading() - headingOffset;
+        robotHeading = getRawHeading();
 
         //Determine the heading current error
         headingError = desiredHeading - robotHeading;

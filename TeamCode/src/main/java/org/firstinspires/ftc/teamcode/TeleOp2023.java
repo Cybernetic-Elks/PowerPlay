@@ -63,8 +63,9 @@ public class TeleOp2023 extends LinearOpMode {
         boolean pressedLastIterationOuttake = false;
         boolean slow = false;
         boolean slow2 = false;
+        boolean limitSwitch = true;
         boolean descending = false;
-        final int UPPER_LIMIT = 12500;
+        final int UPPER_LIMIT = 5800;
         final int HIGH_GOAL = 10530;
         final int MID_GOAL = 7420;
         final int LOW_GOAL = 4400;
@@ -100,18 +101,35 @@ public class TeleOp2023 extends LinearOpMode {
 
             /*h.motorLift.setPower(-gamepad1.left_trigger);
             h.motorLift.setPower(gamepad1.right_trigger);*/
+            if (gamepad2.back) {
+                limitSwitch = !limitSwitch;
+            }
 
             //Motor Lift Controls
-            if (gamepad2.dpad_up /* && h.motorLift <= UPPER_LIMIT */) {
-                if (slow2) {
-                    h.motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    h.motorLift.setPower(.7);
+            if (limitSwitch) {
+                if (gamepad2.dpad_up  && h.motorLift.getCurrentPosition() <= UPPER_LIMIT ) {
+                    if (slow2) {
+                        h.motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                        h.motorLift.setPower(.7);
 
-                } else {
-                    h.motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                    h.motorLift.setPower(1);
+                    } else {
+                        h.motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                        h.motorLift.setPower(1);
+                    }
+
                 }
+            } else {
+                if (gamepad2.dpad_up /* && h.motorLift <= UPPER_LIMIT */) {
+                    if (slow2) {
+                        h.motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                        h.motorLift.setPower(.7);
 
+                    } else {
+                        h.motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                        h.motorLift.setPower(1);
+                    }
+
+                }
             }
             if (gamepad2.dpad_down && !h.touch.isPressed()) {
                 if (slow2) {

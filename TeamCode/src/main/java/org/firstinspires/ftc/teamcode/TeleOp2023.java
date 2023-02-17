@@ -4,8 +4,10 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -60,7 +62,16 @@ public class TeleOp2023 extends LinearOpMode {
         telemetry.addData("imu calib status", h.imu.getCalibrationStatus().toString());
         telemetry.addData("Main Initialization ", "complete");
         telemetry.update();
-        boolean pressedLastIterationOuttake = false;
+
+        Gamepad currentGamepad1 = new Gamepad();
+        Gamepad currentGamepad2 = new Gamepad();
+
+        Gamepad previousGamepad1 = new Gamepad();
+        Gamepad previousGamepad2 = new Gamepad();
+
+        boolean liftIsHoldingPosition = true;
+        int liftHoldingPositionValue = 0;
+
         boolean slow = false;
         boolean slow2 = false;
         boolean limitSwitch = true;
@@ -78,12 +89,31 @@ public class TeleOp2023 extends LinearOpMode {
 
         boolean dropping = false;
 
-        double servoPos = 0;
-
 
         waitForStart();
         while (opModeIsActive()) {
-            boolean pressedOutake = gamepad2.a;
+            try {
+                // Store the gamepad values from the previous loop iteration in
+                // previousGamepad1 and 2 to be used in this loop iteration.
+                // This is equivalent to doing this at the end of the previous
+                // loop iteration, as it will run in the same order except for
+                // the first/last iteration of the loop.
+                previousGamepad1.copy(currentGamepad1);
+                previousGamepad2.copy(currentGamepad2);
+
+                // Store the gamepad values from this loop iteration in
+                // currentGamepad1/2 to be used for the entirety of this loop iteration.
+                // This prevents the gamepad values from changing between being
+                // used and stored in previousGamepad1/2.
+                currentGamepad1.copy(gamepad1);
+                currentGamepad2.copy(gamepad2);
+            }
+            catch (RobotCoreException e) {
+                // Swallow the possible exception, it should not happen as
+                // currentGamepad1/2 are being copied from valid Gamepads.
+            }
+            telemetry.addData("limitSwitch: ", limitSwitch);
+            telemetry.addData("liftHoldingPositionValue: ", liftHoldingPositionValue);
             telemetry.addData("servoIntakeClose: ", h.servoIntakeClose.getPower());
             telemetry.addData("servoIntakeFar: ", h.servoIntakeFar.getPower());
             telemetry.addData("motorLift current Pos: ", h.motorLift.getCurrentPosition());
@@ -93,86 +123,95 @@ public class TeleOp2023 extends LinearOpMode {
             telemetry.addData("Intrinsic: ", h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
             telemetry.addData("Extrinsic: ", h.imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
             telemetry.update();
-            slow = gamepad1.right_trigger > 0.01;
-            slow2 = gamepad2.y;
+            slow = currentGamepad1.right_trigger > 0.01;
+            slow2 = currentGamepad2.y;
 
             /**Start drive system**/
-            h.driveOmniDir(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, slow, 5, 2);
+            h.driveOmniDir(currentGamepad1.left_stick_x, currentGamepad1.left_stick_y, currentGamepad1.right_stick_x, slow, 5, .6);
 
             /*h.motorLift.setPower(-gamepad1.left_trigger);
             h.motorLift.setPower(gamepad1.right_trigger);*/
-            if (gamepad2.back) {
+            if (currentGamepad2.back) {
                 limitSwitch = !limitSwitch;
             }
 
             //Motor Lift Controls
             if (limitSwitch) {
-                if (gamepad2.dpad_up  && h.motorLift.getCurrentPosition() <= UPPER_LIMIT ) {
+                if (currentGamepad2.dpad_up  && h.motorLift.getCurrentPosition() <= UPPER_LIMIT ) {
                     if (slow2) {
                         h.motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                         h.motorLift.setPower(.7);
+                        liftIsHoldingPosition = false;
 
                     } else {
                         h.motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                         h.motorLift.setPower(1);
+                        liftIsHoldingPosition = false;
                     }
 
                 }
             } else {
-                if (gamepad2.dpad_up /* && h.motorLift <= UPPER_LIMIT */) {
+                if (currentGamepad2.dpad_up /* && h.motorLift <= UPPER_LIMIT */) {
                     if (slow2) {
                         h.motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                         h.motorLift.setPower(.7);
+                        liftIsHoldingPosition = false;
 
                     } else {
                         h.motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                         h.motorLift.setPower(1);
+                        liftIsHoldingPosition = false;
                     }
 
                 }
             }
-            if (gamepad2.dpad_down && !h.touch.isPressed()) {
+            if (currentGamepad2.dpad_down && !h.touch.isPressed()) {
                 if (slow2) {
                     h.motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     h.motorLift.setPower(-.6);
+                    liftIsHoldingPosition = false;
 
                 } else {
                     h.motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     h.motorLift.setPower(-1);
+                    liftIsHoldingPosition = false;
                 }
             }
 
-            if ((!gamepad2.dpad_up && h.touch.isPressed()) || (!gamepad2.dpad_up && !gamepad2.dpad_down)) {
-                h.motorLift.setTargetPosition(h.motorLift.getCurrentPosition());
-                h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                h.motorLift.setPower(.5);
+            // Hold Conditions
+            //          Stops us from going too low                         Stops us when we aren't trying to move                                     Stops us from going over our upper limit
+            if (!liftIsHoldingPosition && (!currentGamepad2.dpad_up && h.touch.isPressed()) || (!currentGamepad2.dpad_up && !currentGamepad2.dpad_down) /*|| (!currentGamepad2.dpad_down && h.motorLift.getCurrentPosition() <= UPPER_LIMIT)*/) {
+                liftHoldingPositionValue = h.motorLift.getCurrentPosition();
+                liftIsHoldingPosition = true;
             }
-            /*if (h.touch.isPressed())
+            if(liftIsHoldingPosition)
             {
-                h.motorLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                h.motorLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            }*/
+                h.motorLift.setTargetPosition(liftHoldingPositionValue);
+                h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                h.motorLift.setPower(1);
+            }
+
 
             /*
-            if (gamepad2.dpad_up)
+            if (currentGamepad2.dpad_up)
             {
                 h.motorLift.setTargetPosition(HIGH_GOAL);
                 h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 h.motorLift.setPower(1);
             }
-            if (gamepad2.dpad_left)
+            if (currentGamepad2.dpad_left)
             {
                 h.motorLift.setTargetPosition(MID_GOAL);
                 h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 h.motorLift.setPower(1);
             }
-            if (gamepad2.dpad_down)
+            if (currentGamepad2.dpad_down)
             {
                 h.motorLift.setTargetPosition(LOW_GOAL);
                 h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 h.motorLift.setPower(1);
             }
-            if (gamepad2.dpad_right)
+            if (currentGamepad2.dpad_right)
             {
                 h.motorLift.setPower(-1);
                 descending = true;
@@ -187,14 +226,14 @@ public class TeleOp2023 extends LinearOpMode {
             }
             */
             //Intake
-            if (gamepad2.b) {
+            if (currentGamepad2.b) {
                 h.servoIntakeClose.setPower(1);
                 h.servoIntakeFar.setPower(-1);
                 dropping = false;
             }
 
             //Outtake
-            if (pressedOutake && !pressedLastIterationOuttake) {
+            if (currentGamepad2.a && !previousGamepad2.a) {
                 dropping = true;
                 outtake.reset();
             }
@@ -205,16 +244,15 @@ public class TeleOp2023 extends LinearOpMode {
                 dropping = false;
             }
 
-            if (!gamepad2.a && !gamepad2.b && !dropping) {
+            if (!currentGamepad2.a && !currentGamepad2.b && !dropping) {
                 h.servoIntakeClose.setPower(0);
                 h.servoIntakeFar.setPower(0);
             }
 
 
-            pressedLastIterationOuttake = pressedOutake;
 
             //Turn table
-            //if(gamepad2.left_bumper /* && h.motorLift <= UPPER_LIMIT */)
+            //if(currentGamepad2.left_bumper /* && h.motorLift <= UPPER_LIMIT */)
             /*{
                 if (slow2)
                 {
@@ -226,7 +264,7 @@ public class TeleOp2023 extends LinearOpMode {
                     h.motorTable.setPower(1);
                 }
             }
-            else if(gamepad2.right_bumper)
+            else if(currentGamepad2.right_bumper)
             {
                 if (slow2)
                 {
@@ -244,54 +282,53 @@ public class TeleOp2023 extends LinearOpMode {
             }*/
 
 
-            pressedLastIterationOuttake = pressedOutake;
 
             //Turn Table Manual
 
-            if (gamepad2.right_stick_x > 0.01) {
+            if (currentGamepad2.right_stick_x > 0.01) {
                 h.motorTable.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 h.motorTable.setPower(.4);
-            } else if (gamepad2.right_stick_x < -0.01) {
+            } else if (currentGamepad2.right_stick_x < -0.01) {
                 h.motorTable.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 h.motorTable.setPower(-.4);
             }
 
             //Turn Table Auto
-            if (gamepad2.left_bumper) //Move table to the left of the robot
+            if (currentGamepad2.left_bumper) //Move table to the left of the robot
             {
                 h.motorTable.setTargetPosition(LEFT_TABLE_POS);
                 h.motorTable.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 h.motorTable.setPower(1);
-            } else if (gamepad2.left_trigger > 0.01) //Move table to the right of the robot
+            } else if (currentGamepad2.left_trigger > 0.01) //Move table to the right of the robot
             {
                 h.motorTable.setTargetPosition(RIGHT_TABLE_POS);
                 h.motorTable.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 h.motorTable.setPower(1);
-            } else if (gamepad2.right_trigger > 0.01) //Move table to in front of the robot
+            } else if (currentGamepad2.right_trigger > 0.01) //Move table to in front of the robot
             {
                 h.motorTable.setTargetPosition(FRONT_TABLE_POS);
                 h.motorTable.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 h.motorTable.setPower(1);
-            } else if (gamepad2.right_bumper) //Move table to the back of the robot
+            } else if (currentGamepad2.right_bumper) //Move table to the back of the robot
             {
                 h.motorTable.setTargetPosition(BACK_TABLE_POS);
                 h.motorTable.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 h.motorTable.setPower(1);
             }
-            if (!h.motorTable.isBusy() && !(gamepad2.right_stick_x > 0.01) && !(gamepad2.right_stick_x < -0.01))
+            if (!h.motorTable.isBusy() && !(currentGamepad2.right_stick_x > 0.01) && !(currentGamepad2.right_stick_x < -0.01))
             {
                 h.motorTable.setPower(0);
             }
 
-            if (gamepad2.dpad_left)
+            if (currentGamepad2.dpad_left)
             {
                 h.servoExtension.setPower(1);
             }
-            if (gamepad2.dpad_right)
+            if (currentGamepad2.dpad_right)
             {
                 h.servoExtension.setPower(-1);
             }
-            if(!gamepad2.dpad_left && !gamepad2.dpad_right)
+            if(!currentGamepad2.dpad_left && !currentGamepad2.dpad_right)
             {
                 h.servoExtension.setPower(0);
             }

@@ -115,7 +115,7 @@ public class Hardware extends LinearOpMode
     // Increase these numbers if the heading does not corrects strongly enough (eg: a heavy robot or using tracks)
     // Decrease these numbers if the heading does not settle on the correct value (eg: very agile robot with omni wheels)
     static final double     P_TURN_GAIN            = 0.02;     // Larger is more responsive, but also less stable
-    static final double     P_DRIVE_GAIN           = 0.04;     // Larger is more responsive, but also less stable
+    static final double     P_DRIVE_GAIN           = 0.0208;     // Larger is more responsive, but also less stable
 
     private Telemetry telemetry;
 
@@ -397,22 +397,6 @@ public class Hardware extends LinearOpMode
 
 
     }
-    public void drivePID(double angle, int distanceInches, double power)
-    {
-        int distanceEncodeVal;
-        final double     COUNTS_PER_MOTOR_REV    = 384.5 ;    // eg: Gobuilda 13.7:1 Ratio, 435 RPM
-        final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
-        final double     WHEEL_DIAMETER_INCHES   = 96 / 25.4;     // For figuring circumference (3.69) (96mm / 25.4 = ~3.69)
-        final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);
-
-        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-
-    }
-
 
     /**
      * Drives the robot left/right a set number of inches at a set power
@@ -510,8 +494,7 @@ public class Hardware extends LinearOpMode
     /**
      * Drives the robot left/right a set number of inches at a set power
      *
-     * <p>Issues: Haven't used this enough to determine the issues it might work though
-     * I would like to calculate the drive time instead of doing it manually</p>
+     * <p>Issues: Seems to be working fine though I need to do some further testing on it
      *
      *
      *
@@ -577,11 +560,12 @@ public class Hardware extends LinearOpMode
     {
         /**                   | Forward and|
          *                    | Backwards  | Strafing | Turning |  */
-        if(!slow){
-            motorFrontRight.setPower((-joystickY - joystickX - rotation) / baseFactor);
-            motorBackRight.setPower((-joystickY + joystickX - rotation) / baseFactor);
-            motorFrontLeft.setPower((-joystickY + joystickX + rotation) / baseFactor);
-            motorBackLeft.setPower((-joystickY - joystickX + rotation) / baseFactor);
+        if(!slow)
+        {
+            motorFrontRight.setPower((-joystickY - joystickX - rotation) * baseFactor);
+            motorBackRight.setPower((-joystickY + joystickX - rotation) * baseFactor);
+            motorFrontLeft.setPower((-joystickY + joystickX + rotation) * baseFactor);
+            motorBackLeft.setPower((-joystickY - joystickX + rotation) * baseFactor);
         }
         else
         {
@@ -668,7 +652,7 @@ public class Hardware extends LinearOpMode
     /**
      * Gives back the robots integrated heading, mainly used in autonomous
      *
-     * <p>Issues: had issues in the past, but seems to be working currently</p>
+     * <p>Issues: Need to look into some on how this works compared to just getting the angle normally</p>
      *
      * @return integrated heading in degrees [-180,180]
      */
@@ -1071,6 +1055,14 @@ public class Hardware extends LinearOpMode
         motorBackRight.setPower(motorPower);
     }
 
+    /**
+     * Sets all indiviual drive motors to a certain power. Used to save a few lines in autonomous mainly
+     *
+     * @param frontLeft power to set frontLeft motor to [-1,1]
+     * @param backLeft power to set backLeft motor to [-1,1]
+     * @param frontRight power to set frontRight motor to [-1,1]
+     * @param backRight power to set frontRight motor to [-1,1]
+     */
     public void setIndividualDrivePower(double frontLeft, double backLeft, double frontRight, double backRight)
     {
         motorFrontLeft.setPower(frontLeft);
@@ -1079,6 +1071,7 @@ public class Hardware extends LinearOpMode
         motorBackRight.setPower(backRight);
     }
 
+    //Unfinished
     public void  driveDecay(boolean forward, int distanceEncodeVal, double power)
     {
 
@@ -1210,7 +1203,7 @@ public class Hardware extends LinearOpMode
 
         
         //Enter control loop while program is still running and both motors are busy
-        while(true)
+        while(motorFrontRight.getCurrentPosition() < distanceEncoderTicks - 20 && !isStopRequested())
         {
 
             telemetry.addData("TurnSpeed", turnSpeed);

@@ -257,12 +257,13 @@ public class PowerPlayTagAutoOld extends LinearOpMode
         /*h.drivePureEncoder(true,h.calculateTicks(2),.2);
         h.sleep(2500);*/
 
-        h.strafePureEncoder(true,h.calculateTicks(5.5),.35);
+        h.strafePureEncoder(true,h.calculateTicks(5.3),.35);
         h.sleep(750);
 
         //Drive to row of the high pole
         //h.driveStraight(.3,55,0);
-        h.drivePureEncoder(true,h.calculateTicks(55),.2);
+        //h.drivePureEncoder(true,h.calculateTicks(55),.2);
+        h.driveStraight(true,55,0,.2);
         h.sleep(250);
 
 
@@ -273,7 +274,7 @@ public class PowerPlayTagAutoOld extends LinearOpMode
 
 
         //Line up with high pole
-        h.strafePureEncoder(true,h.calculateTicks(14),.3);
+        h.strafePureEncoder(true,h.calculateTicks(12),.3);
         h.sleep(230);
 
         //Start raising arm to high tower position
@@ -286,7 +287,7 @@ public class PowerPlayTagAutoOld extends LinearOpMode
         h.drivePureEncoder(true,h.calculateTicks(8),.2);
         h.sleep(250);
 
-        h.servoExtension.setPower(-1);
+        //h.servoExtension.setPower(-1);
 
         //Back up a bit to get better alignment
         h.drivePureEncoder(false,h.calculateTicks(2.25),.2);
@@ -355,7 +356,7 @@ public class PowerPlayTagAutoOld extends LinearOpMode
                 h.sleep(500);
                 break;
             case RIGHT:
-                h.drivePureEncoder(false,h.calculateTicks(10),.2);
+                h.drivePureEncoder(false,h.calculateTicks(8),.2);
                 h.sleep(250);
                 h.strafePureEncoder(true, h.calculateTicks(4), .2);
                 h.sleep(500);

@@ -82,8 +82,8 @@ public class TeleOp2023 extends LinearOpMode {
         final int LOW_GOAL = 4400;
         final int CONE_HEIGHT = 0;
 
-        final int LEFT_TABLE_POS = -1022;
-        final int RIGHT_TABLE_POS = 1026;
+        final int LEFT_TABLE_POS = -1256;
+        final int RIGHT_TABLE_POS = 1300; //1300
         final int FRONT_TABLE_POS = 0;
         final int BACK_TABLE_POS = 2526;
 
@@ -188,7 +188,7 @@ public class TeleOp2023 extends LinearOpMode {
             {
                 h.motorLift.setTargetPosition(liftHoldingPositionValue);
                 h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                h.motorLift.setPower(1);
+                h.motorLift.setPower(.7);
             }
 
 

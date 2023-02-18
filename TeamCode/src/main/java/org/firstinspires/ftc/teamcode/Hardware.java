@@ -1163,12 +1163,17 @@ public class Hardware extends LinearOpMode
         robotHeading = 0;
     }
 
-    public void driveStraight(boolean forward, double distance, double heading, double maxDriveSpeed)
+    public void driveStraight(boolean forward, double distance, double heading, double baseDriveSpeed)
     {
+        PIDController pidController = new PIDController(.05,0,0,.25);
+
         //Find new target pos and pass to motor controller
         int distanceEncoderTicks = calculateTicks(distance);
         telemetry.addData("distanceEncoderTicks: ", distanceEncoderTicks);
         telemetry.update();
+
+        double leftPower = baseDriveSpeed;
+        double rightPower = baseDriveSpeed;
 
         DcMotor.RunMode lastMode = motorFrontLeft.getMode();
 
@@ -1177,70 +1182,33 @@ public class Hardware extends LinearOpMode
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-
-        
-        //Set target and then turn on RUN_TO_POSITION
-        motorFrontLeft.setTargetPosition(distanceEncoderTicks);
-        motorBackLeft.setTargetPosition(distanceEncoderTicks);
-        motorFrontRight.setTargetPosition(distanceEncoderTicks);
-        motorBackRight.setTargetPosition(distanceEncoderTicks);
-
-        maxDriveSpeed = Math.abs(maxDriveSpeed);
-        double driveSpeed = maxDriveSpeed;
-
-        motorFrontLeft.setPower(maxDriveSpeed);
-        motorBackLeft.setPower(maxDriveSpeed);
-        motorFrontRight.setPower(maxDriveSpeed);
-        motorBackRight.setPower(maxDriveSpeed);
-
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        // Set the required driving speed  (must be positive for RUN_TO_POSITION)
-        // Start driving straight, and then enter the control loop
-
-        
-        //Enter control loop while program is still running and both motors are busy
-        while(motorFrontRight.getCurrentPosition() < distanceEncoderTicks - 20 && !isStopRequested())
+        while(motorFrontLeft.getCurrentPosition() < distanceEncoderTicks - 20 && !isStopRequested())
         {
+            double correction = pidController.output(heading, getRawHeading());
 
-            telemetry.addData("TurnSpeed", turnSpeed);
-            telemetry.addData("Raw Heading", getRawHeading());
-            telemetry.addData("Heading Error", headingError);
-            telemetry.update();
-
-            
-            //Determine steering correction needing to stay on heading
-            double turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
-            
-            if (!forward) {
-                turnSpeed *= -1.0;
+            if(forward)
+            {
+                leftPower = Range.clip(baseDriveSpeed - correction, -1, 1);
+                rightPower = Range.clip(baseDriveSpeed + correction,-1,1);
             }
-            
-            motorFrontLeft.setPower(driveSpeed - turnSpeed);
-            motorBackLeft.setPower(driveSpeed - turnSpeed);
-            motorFrontRight.setPower(driveSpeed + turnSpeed);
-            motorBackRight.setPower(driveSpeed + turnSpeed);
+            else //Need to test and see if this drives it backwards properly
+            {
+                baseDriveSpeed *= -1;
+
+                leftPower = Range.clip(baseDriveSpeed - correction, -1, 1);
+                rightPower = Range.clip(baseDriveSpeed + correction,-1,1);
+            }
+
+
+            setIndividualDrivePower(leftPower, leftPower, rightPower, rightPower);
+
+            telemetry.addData("leftPower: ", leftPower);
+            telemetry.addData("rightPower: ", rightPower);
+            telemetry.addData("correction: ", correction);
+            telemetry.update();
         }
-    }
+        setDrivePower(0);
 
-    double getSteeringCorrection(double desiredHeading, double proportionalGain)
-    {
-
-        //Get the robot heading by applying an offset to the IMU heading
-        robotHeading = getRawHeading();
-
-        //Determine the heading current error
-        headingError = desiredHeading - robotHeading;
-
-        // Normalize the error to be within +/- 180 degrees
-        while (headingError > 180)  headingError -= 360;
-        while (headingError <= -180) headingError += 360;
-
-        // Multiply the error by the gain to determine the required steering correction/  Limit the result to +/- 1.0
-        return Range.clip(headingError * proportionalGain, -1, 1);
     }
 }
 

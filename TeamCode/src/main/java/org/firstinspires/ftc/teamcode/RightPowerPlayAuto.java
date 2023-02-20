@@ -24,8 +24,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.RobotAutoDriveByGyro_Linear;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -37,8 +37,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name="LEFT POWERPLAY", group = "Auto")
-public class PowerPlayTagAutoOld extends LinearOpMode
+@Autonomous(name="RIGHT POWERPLAY", group = "Auto")
+public class RightPowerPlayAuto extends LinearOpMode
 {
     Hardware h = new Hardware();
     public enum Side
@@ -253,113 +253,23 @@ public class PowerPlayTagAutoOld extends LinearOpMode
         h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         h.motorLift.setPower(1);
 
-        //Align at center of mat
-        /*h.drivePureEncoder(true,h.calculateTicks(2),.2);
-        h.sleep(2500);*/
-
-        h.strafePureEncoder(true,h.calculateTicks(5.3),.35);
-        h.sleep(750);
-
-        //Drive to row of the high pole
-        //h.driveStraight(.3,55,0);
-        //h.drivePureEncoder(true,h.calculateTicks(55),.2);
-        h.driveStraight(true,55,0,.2);
-        h.sleep(250);
-
-
-
-        h.drivePureEncoder(false,h.calculateTicks(5),.2);
-        h.sleep(250);
-
-
-
-        //Line up with high pole
-        h.strafePureEncoder(true,h.calculateTicks(12),.3);
-        h.sleep(230);
-
-        //Start raising arm to high tower position
-        h.motorLift.setTargetPosition(5300);
-        h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        h.motorLift.setPower(1);
-        h.sleep(2500);
-
-        //Run towards the pole
-        h.drivePureEncoder(true,h.calculateTicks(8),.2);
-        h.sleep(250);
-
-        //h.servoExtension.setPower(-1);
-
-        //Back up a bit to get better alignment
-        h.drivePureEncoder(false,h.calculateTicks(2.25),.2);
-        h.sleep(250);
-
-        //Drop cone
-        h.servoIntakeClose.setPower(-1);
-        h.servoIntakeFar.setPower(1);
-        h.sleep(1700);
-        h.servoIntakeClose.setPower(0);
-        h.servoIntakeFar.setPower(0);
-
-        h.drivePureEncoder(false, h.calculateTicks(5),.3);
-        h.sleep(250);
-
-        h.motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        h.motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        h.motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        h.motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        //Start lowering arm to ground tower position
-        h.motorLift.setTargetPosition(1300);
-        h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        h.motorLift.setPower(1);
-
-        h.sleep(500);
-
-
-        h.strafePureEncoder(true,h.calculateTicks(5.5),.2);
-        h.sleep(2500);
-
-
-        h.turnIMU(90,.3,.2);
-
-
-        //Park in correct zone
-        h.motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        h.motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        h.motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        h.motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        h.setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         switch (parkingSide)
         {
             case LEFT:
-                h.setDrivePower((float).07);
-                while(Math.abs(5 - h.distance.getDistance(DistanceUnit.INCH)) >= 0.3 ) {
-                    motorPower = 5 - h.distance.getDistance(DistanceUnit.INCH) > 0 ? -.07 : .07;
-                    h.setDrivePower((float)motorPower);
-                    telemetry.addLine("Driving...");
-                    telemetry.addData("Motor power", h.motorFrontRight.getPower());
-                    telemetry.addData("Current Distance", h.distance.getDistance(DistanceUnit.INCH));
-                    telemetry.update();
-                }
+                h.strafePureEncoder(false,h.calculateTicks(24),.3);
+                h.sleep(1500);
+                h.driveHeading(25,0,.4);
                 break;
             case MIDDLE:
-                h.setDrivePower((float).07);
-                while(Math.abs(33.5 - h.distance.getDistance(DistanceUnit.INCH)) >= 0.3 ) {
-                    motorPower = 33.5 - h.distance.getDistance(DistanceUnit.INCH) > 0 ? -.07 : .07;;
-                    h.setDrivePower((float)motorPower);
-                    telemetry.addLine("Driving...");
-                    telemetry.addData("Motor power", h.motorFrontRight.getPower());
-                    telemetry.addData("Current Distance", h.distance.getDistance(DistanceUnit.INCH));
-                    telemetry.update();
-                }
-                h.strafePureEncoder(true, h.calculateTicks(2), .2);
-                h.sleep(500);
+                h.driveHeading(25,0,.4);
+                h.sleep(1500);
                 break;
             case RIGHT:
-                h.drivePureEncoder(false,h.calculateTicks(8),.2);
-                h.sleep(250);
-                h.strafePureEncoder(true, h.calculateTicks(4), .2);
-                h.sleep(500);
+                h.strafePureEncoder(true,h.calculateTicks(24),.3);
+                h.sleep(1500);
+                h.driveHeading(25,0,.4);
                 break;
         }
         h.setDrivePower(0);

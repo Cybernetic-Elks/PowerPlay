@@ -5,7 +5,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -133,6 +132,8 @@ public class Hardware extends LinearOpMode
         motorBackRight = aMap.dcMotor.get("motorBackRight");
         motorBackLeft = aMap.dcMotor.get("motorBackLeft");
         motorFrontLeft = aMap.dcMotor.get("motorFrontLeft");
+
+        setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -313,13 +314,7 @@ public class Hardware extends LinearOpMode
     public void drivePureEncoder(boolean forward, int distanceEncodeVal, double power)
     {
 
-        DcMotor.RunMode lastMode = motorFrontLeft.getMode();
-
-        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
+        setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         if(forward)
         {
@@ -341,10 +336,7 @@ public class Hardware extends LinearOpMode
         motorBackLeft.setPower(power);
         motorBackRight.setPower(power);
 
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         /*
         while((motorFrontLeft.getCurrentPosition() > distanceEncodeVal) && opModeIsActive())
@@ -384,11 +376,6 @@ public class Hardware extends LinearOpMode
         motorFrontRight.setTargetPosition(0);
         motorBackLeft.setTargetPosition(0);
         motorBackRight.setTargetPosition(0);*/
-
-        motorFrontLeft.setMode(lastMode);
-        motorFrontRight.setMode(lastMode);
-        motorBackLeft.setMode(lastMode);
-        motorBackRight.setMode(lastMode);
 
         motorFrontLeft.setPower(0);
         motorFrontRight.setPower(0);
@@ -504,10 +491,12 @@ public class Hardware extends LinearOpMode
      */
     public void strafePureEncoder(boolean left, int distanceEncodeVal,double power)
     {
+
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         //Directions on this might be wrong
         if(left)
         {
@@ -525,8 +514,8 @@ public class Hardware extends LinearOpMode
         }
 
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         setDrivePower((float) power);
 
@@ -868,10 +857,7 @@ public class Hardware extends LinearOpMode
     public void turnIMU(int targetDegrees, double power, double correctionPower)
     {
 
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Right is up to +180
         //Left is up to -180
@@ -1040,6 +1026,8 @@ public class Hardware extends LinearOpMode
         motorBackLeft.setPower(0);
         motorFrontRight.setPower(0);
         motorBackRight.setPower(0);
+
+
     }
 
     /**
@@ -1053,6 +1041,19 @@ public class Hardware extends LinearOpMode
         motorBackLeft.setPower(motorPower);
         motorFrontRight.setPower(motorPower);
         motorBackRight.setPower(motorPower);
+    }
+
+    /**
+     * Sets all drive motors to a certain mode. Used to save a few lines in autonomous mainly
+     *
+     * @param motorMode mode to set all motors to
+     */
+    public void setDriveMode(DcMotor.RunMode motorMode)
+    {
+        motorFrontLeft.setMode(motorMode);
+        motorBackLeft.setMode(motorMode);
+        motorFrontRight.setMode(motorMode);
+        motorBackRight.setMode(motorMode);
     }
 
     /**
@@ -1163,42 +1164,43 @@ public class Hardware extends LinearOpMode
         robotHeading = 0;
     }
 
-    public void driveStraight(boolean forward, double distance, double heading, double baseDriveSpeed)
+    /**
+     * Drives us forward/backward a set distance at a set heading and base speed using a PID to control our heading.
+     *
+     * <p>Comments: Haven't tested driving backwards and I am wondering if a positional/distance PID controller can be
+     *              incorporated to get more optimal motor speed. IE: starting out fast and slowing down as it reaches its target</p>
+     *
+     * @param distance distance in inches to travel
+     * @param heading heading to drive at
+     * @param baseDriveSpeed base power to set the motors to that will then be corrected via PID
+     *
+     *
+     */
+    public void driveHeading(double distance, double heading, double baseDriveSpeed)
     {
-        PIDController pidController = new PIDController(.05,0,0,.25);
+        PIDController pidController = new PIDController(.03,0,0,.25);
 
         //Find new target pos and pass to motor controller
         int distanceEncoderTicks = calculateTicks(distance);
         telemetry.addData("distanceEncoderTicks: ", distanceEncoderTicks);
         telemetry.update();
 
-        double leftPower = baseDriveSpeed;
-        double rightPower = baseDriveSpeed;
-
-        DcMotor.RunMode lastMode = motorFrontLeft.getMode();
+        double leftPower;
+        double rightPower;
 
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         while(motorFrontLeft.getCurrentPosition() < distanceEncoderTicks - 20 && !isStopRequested())
         {
             double correction = pidController.output(heading, getRawHeading());
 
-            if(forward)
-            {
-                leftPower = Range.clip(baseDriveSpeed - correction, -1, 1);
-                rightPower = Range.clip(baseDriveSpeed + correction,-1,1);
-            }
-            else //Need to test and see if this drives it backwards properly
-            {
-                baseDriveSpeed *= -1;
-
-                leftPower = Range.clip(baseDriveSpeed - correction, -1, 1);
-                rightPower = Range.clip(baseDriveSpeed + correction,-1,1);
-            }
-
+            leftPower = Range.clip(baseDriveSpeed - correction, -1, 1);
+            rightPower = Range.clip(baseDriveSpeed + correction,-1,1);
 
             setIndividualDrivePower(leftPower, leftPower, rightPower, rightPower);
 
@@ -1209,6 +1211,44 @@ public class Hardware extends LinearOpMode
         }
         setDrivePower(0);
 
+    }
+
+    //WIP
+    public void strafeHeading(double distance, double heading, double baseDriveSpeed)
+    {
+        PIDController pidController = new PIDController(.03,0,0,.25);
+
+        //Find new target pos and pass to motor controller
+        int distanceEncoderTicks = calculateTicks(distance);
+
+        // leftDiagonal: frontLeft and backRight
+        // rightDiagonal: backLeft and frontRight
+
+        double leftDiagonalPower = baseDriveSpeed;
+        double rightDiagonalPower = -baseDriveSpeed;
+
+        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        while(motorFrontLeft.getCurrentPosition() < distanceEncoderTicks - 20 && !isStopRequested())
+        {
+            double correction = pidController.output(heading, getRawHeading());
+
+            leftDiagonalPower = Range.clip(baseDriveSpeed - correction, -1, 1);
+            rightDiagonalPower = Range.clip(baseDriveSpeed + correction,-1,1);
+
+            setIndividualDrivePower(leftDiagonalPower, rightDiagonalPower, leftDiagonalPower, rightDiagonalPower);
+
+            telemetry.addData("leftDiagonal: ", leftDiagonalPower);
+            telemetry.addData("rightDiagonal: ", rightDiagonalPower);
+            telemetry.addData("correction: ", correction);
+            telemetry.update();
+        }
+        setDrivePower(0);
     }
 }
 

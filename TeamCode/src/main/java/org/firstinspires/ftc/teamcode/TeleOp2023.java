@@ -127,7 +127,7 @@ public class TeleOp2023 extends LinearOpMode {
             slow2 = currentGamepad2.y;
 
             /**Start drive system**/
-            h.driveOmniDir(currentGamepad1.left_stick_x, currentGamepad1.left_stick_y, currentGamepad1.right_stick_x, slow, 5, .6);
+            h.driveOmniDir(currentGamepad1.left_stick_x, currentGamepad1.left_stick_y, currentGamepad1.right_stick_x, slow, 5, .65);
 
             /*h.motorLift.setPower(-gamepad1.left_trigger);
             h.motorLift.setPower(gamepad1.right_trigger);*/

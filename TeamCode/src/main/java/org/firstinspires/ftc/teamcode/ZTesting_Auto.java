@@ -106,7 +106,7 @@ public class ZTesting_Auto extends LinearOpMode {
 
         h.resetHeading();
 
-        while(h.motorFrontLeft.getCurrentPosition() < targetEncoderValue - 20 && !isStopRequested())
+        while(!isStopRequested())
         {
             timer.reset();
             correction = pidController.output(0, h.getRawHeading());

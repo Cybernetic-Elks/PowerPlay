@@ -255,15 +255,21 @@ public class ProtoPowerPlayAuto extends LinearOpMode
         telemetry.update();
 
         //Start raising arm to mid tower position
-        h.motorLift.setTargetPosition(3000);
+        h.motorLift.setTargetPosition(2023);
         h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         h.motorLift.setPower(1);
 
-        h.strafePureEncoder(true,h.calculateTicks(5.3),.35);
+        h.drivePureEncoder(true,h.calculateTicks(2),.2);
+        h.sleep(200);
 
-        h.driveHeading(47,0,.3);
+        h.strafePureEncoder(true, h.calculateTicks(16), .5);
+        h.sleep(300);
 
-        h.strafePureEncoder(true,h.calculateTicks(13),.35);
+        h.driveHeading(7,0,.2);
+        h.sleep(200);
+
+        h.drivePureEncoder(false, h.calculateTicks(2), .2);
+        h.sleep(200);
 
         //Drop cone
         h.servoIntakeClose.setPower(-1);
@@ -272,46 +278,17 @@ public class ProtoPowerPlayAuto extends LinearOpMode
         h.servoIntakeClose.setPower(0);
         h.servoIntakeFar.setPower(0);
 
-        h.drivePureEncoder(false,h.calculateTicks(11),.2);
-
-        //Start raising arm to stack position
-        h.motorLift.setTargetPosition(4400);
-        h.motorLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        h.motorLift.setPower(1);
-
-        h.strafePureEncoder(true,h.calculateTicks(13),.35);
-
-        h.driveHeading(26,0,.2);
-
-        h.motorTable.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        double error = -90 - h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-        //TODO The table can be turned a bit less as well to correct for the misalignment
-        while(Math.abs(error) >= 1 ) {
-            error = -90 - h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-            double tablePower = error > 0 ? -.30 : .30;
-            h.motorTable.setPower(tablePower);
-
-            telemetry.addLine("Turning...");
-            telemetry.addData("tablePower: ", tablePower);
-            telemetry.addData("Current Angle", h.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
-            telemetry.addData("error: ", error);
-            telemetry.update();
-        }
-        h.motorTable.setPower(0);
-
-        h.strafePureEncoder(true,h.calculateTicks(13),.3);
-
-
+        h.drivePureEncoder(false, h.calculateTicks(5),.6);
+        h.sleep(200);
 
         //Park in correct zone
-        /*switch (parkingSide)
+        switch (parkingSide)
         {
             case LEFT:
 
                 h.strafePureEncoder(true, h.calculateTicks(16),.5);
                 h.sleep(2500);
-                h.drivePureEncoder(true, h.calculateTicks(46),.4);
+                h.driveHeading(46,0,.4);
                 h.sleep(2500);
                 h.turnIMU(90,.4,.2);
                 h.sleep(1000);
@@ -320,7 +297,7 @@ public class ProtoPowerPlayAuto extends LinearOpMode
             case MIDDLE:
                 h.strafePureEncoder(true, h.calculateTicks(16),.5);
                 h.sleep(2500);
-                h.drivePureEncoder(true, h.calculateTicks(46),.4);
+                h.driveHeading(46,0,.4);
                 h.sleep(2500);
                 h.turnIMU(90,.4,.2);
                 h.sleep(1000);
@@ -330,12 +307,13 @@ public class ProtoPowerPlayAuto extends LinearOpMode
             case RIGHT:
                 h.strafePureEncoder(true, h.calculateTicks(16),.5);
                 h.sleep(2500);
-                h.drivePureEncoder(true, h.calculateTicks(33),.5);
+                h.driveHeading(33,0,.5);
                 h.sleep(2500);
                 h.turnIMU(90,.4,.2);
                 h.sleep(1000);
                 break;
-        }*/
+        }
+
     }
 
     void tagToTelemetry(AprilTagDetection detection)

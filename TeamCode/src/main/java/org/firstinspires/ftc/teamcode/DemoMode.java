@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+//TODO Redo for this year's robot (powerplay 2023)
 //TODO Add limts to other parts of robot, possibly to main TeleOp
 @TeleOp(name = "Demo TeleOp", group = "TeleOp")
 /**
